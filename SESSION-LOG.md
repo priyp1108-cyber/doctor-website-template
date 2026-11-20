@@ -9,6 +9,55 @@ entry, and fill it in before ending the session.
 
 ---
 
+## Session 3 — 20 Nov 2026 · Design critique and fixes
+
+**Goal:** review the UI and flow on desktop and phone, then fix what does not
+need the clinic's input.
+
+### What changed
+- Unconfirmed content is hidden instead of printed. Marquee items, the
+  concern "approach" block, the doctor quote, bio and fact rows, the step 3
+  text, FAQ answers and the footer registration only render once their
+  `[CONFIRM]` value is replaced. The FAQ structured data skips unanswered
+  questions too (`answeredFaqs` in `src/lib/placeholder.ts`).
+- Hero now names the doctor above the qualifications.
+- Booking bar is phone-only. The floating desktop pill is gone (it covered
+  text; the header button does the same job). On phones the bar stays hidden
+  while the hero's or the form's WhatsApp button is on screen.
+- Recognition is one swipeable row on phones and four across on desktop
+  (was a 2×2 grid of large photos; about 1,080px shorter on a phone).
+- Clinic photos are the same height; the request form card no longer
+  stretches; the form's concern select starts on "Choose one"; phone-number
+  links have a 44px tap area.
+- Playwright mobile test updated for the new booking-bar behaviour.
+
+### Decisions and why
+- While the doctor's quote is unconfirmed, the Doctor section heading falls
+  back to his name, so the section still has a heading.
+- Kept the header "Book a visit" button on phones: without it the phone
+  header is only a logo, and hiding the bottom bar at the hero already
+  removes the triple WhatsApp button.
+- These are shared component fixes, so they were committed on `main` first
+  and then cherry-picked onto `sa-skincure`. A plain `git merge main` is not
+  safe there: `main` sits on top of the commit `sa-skincure` points at, so
+  the merge would fast-forward the client branch into the generic template
+  and replace the clinic's content with placeholders. Cherry-pick shared
+  fixes onto client branches instead.
+
+### Still open
+- The 8 `[CONFIRM]` values in `site.ts` (plus the step 3 text in
+  `VisitSteps.tsx`) still need the clinic's facts. Only one FAQ shows until
+  the other two answers are confirmed.
+- `public/images/map.webp` is still the placeholder that reads "STATIC MAP OF
+  THE CLINIC". It needs a real static map of the pin.
+- Not done from the critique: a phone nav menu, fewer type sizes (14 in
+  use), tab roles on the concern picker, a pause control for the marquee
+  (it pauses on hover only).
+- `.claude/launch.json` was added locally so the app's browser pane can start
+  the dev server.
+
+---
+
 ## Session 2 — 20 Nov 2026 · Generic template on main, client on a branch
 
 **Goal:** make the repo a reusable doctor-website template, with each client

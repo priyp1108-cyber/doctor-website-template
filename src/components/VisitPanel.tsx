@@ -41,7 +41,7 @@ export function VisitPanel() {
               </div>
               <p className="mt-6 flex gap-3 text-[17px]">
                 <PhoneIcon className="mt-1 shrink-0 text-accent" />
-                <a href={telLink()} data-track="call_click" data-source="visit" className="font-semibold text-paper underline decoration-accent underline-offset-4">
+                <a href={telLink()} data-track="call_click" data-source="visit" className="-my-2.5 inline-block py-2.5 font-semibold text-paper underline decoration-accent underline-offset-4">
                   {clinic.phone}
                 </a>
               </p>

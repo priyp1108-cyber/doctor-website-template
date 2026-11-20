@@ -42,7 +42,7 @@ export function RequestForm() {
   const err = (k: keyof Errors) => (errors[k] ? `${id}-${k}-error` : undefined);
 
   return (
-    <div className="rounded-[32px] bg-paper p-7 text-ink shadow-soft sm:p-9">
+    <div className="rounded-[32px] bg-paper p-7 text-ink shadow-soft sm:p-9 lg:self-start">
       <h3 className="text-h3">Request a time</h3>
       {/* Without JS the form still opens WhatsApp with a general message. */}
       <form
@@ -89,9 +89,9 @@ export function RequestForm() {
             <select
               id={`${id}-concern`}
               name="concern"
-              defaultValue={site.concerns[0]!.slug}
               className={`${fieldClass} cursor-pointer appearance-none border-ink/15 pr-12`}
             >
+              <option value="">Choose one</option>
               {site.concerns.map((c) => (
                 <option key={c.slug} value={c.slug}>{c.label}</option>
               ))}
