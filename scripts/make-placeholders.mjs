@@ -10,11 +10,10 @@ await mkdir(out, { recursive: true });
 
 const ink = "#14304F";
 const images = [
-  ["portrait", 960, 1120, "#D6E8F7", "Portrait — Dr. Panda"],
-  ["doctor-at-work", 1040, 1080, "#23466E", "Dr. Panda at work"],
-  ["reception", 800, 840, "#E6ECF4", "Reception"],
-  ["consultation-room", 800, 1040, "#DDE3F3", "Consultation room"],
-  ["entrance", 800, 840, "#DCE6EA", "Entrance"],
+  ["portrait", 960, 1120, "#D6E8F7", "Doctor portrait"],
+  ["doctor-at-work", 1040, 1080, "#23466E", "Doctor at work"],
+  ["reception", 1280, 960, "#E6ECF4", "Reception"],
+  ["treatment-room", 1280, 960, "#DDE3F3", "Treatment room"],
   ["map", 1040, 480, "#23466E", "Static map of the clinic"],
 ];
 

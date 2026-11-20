@@ -6,7 +6,7 @@ export function Doctor() {
   const d = site.doctor;
   const facts: { term: string; detail: string }[] = [
     { term: "Qualifications", detail: d.qualificationDetail },
-    { term: "Teaching", detail: d.position },
+    ...(d.position ? [{ term: "Teaching", detail: d.position }] : []),
     { term: "Registration", detail: d.registration },
     { term: "Languages", detail: d.languages.join(", ") },
     ...(d.yearsInPractice ? [{ term: "In practice", detail: `${d.yearsInPractice} years` }] : []),

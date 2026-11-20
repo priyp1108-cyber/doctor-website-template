@@ -3,7 +3,7 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 import { site } from "@/content/site";
 
-export const alt = `${site.name} — Dermatologist in ${site.clinic.city}`;
+export const alt = `${site.name} — ${site.specialty.title} in ${site.clinic.city}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -50,10 +50,10 @@ export default async function OpengraphImage() {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 28, letterSpacing: 4, textTransform: "uppercase", color: accent, fontWeight: 700 }}>
-            {`Dermatologist · ${site.clinic.city}`}
+            {`${site.specialty.title} · ${site.clinic.city}`}
           </div>
           <div style={{ fontSize: 84, lineHeight: 1.05, letterSpacing: -2, marginTop: 16 }}>{site.doctor.name}</div>
-          <div style={{ fontSize: 40, marginTop: 24, color: "#D7E2EE" }}>Skin, hair and nail care</div>
+          <div style={{ fontSize: 40, marginTop: 24, color: "#D7E2EE" }}>{site.specialty.tagline}</div>
         </div>
         <div style={{ display: "flex" }}>
           <div style={{ background: brand, color: paper, borderRadius: 999, padding: "18px 34px", fontSize: 30, fontWeight: 700 }}>

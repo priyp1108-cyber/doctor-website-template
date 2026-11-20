@@ -9,7 +9,48 @@ entry, and fill it in before ending the session.
 
 ---
 
-## Session 1 — 18–20 Nov 2026 · First build, real content, GitHub
+## Session 2 — 20 Nov 2026 · Generic template on main, client on a branch
+
+**Goal:** make the repo a reusable doctor-website template, with each client
+site on its own branch.
+
+### What changed
+- GitHub repo renamed `sa-skincure-website` → `priyp1108-cyber/doctor-website-template`
+  (still private). Local folder renamed to `~/doctor-website-template`.
+- New branch `sa-skincure`: the SA Skincure site exactly as it was at the end
+  of session 1 (Session 1 below describes that branch).
+- `main` is now the generic template:
+  - `site.ts` uses `[CONFIRM]` placeholders for the doctor and clinic,
+    sample hours, an empty `recognition` list (section hidden) and no position.
+  - New `site.specialty` (title, schema field, adjective, hero headline,
+    tagline). It drives the page title, description, link-preview image,
+    JSON-LD `medicalSpecialty`, hero heading and recognition text.
+    `*word*` in the headline sets that word in italics.
+  - Clinic photos, conference photos and `photos-source/` originals removed.
+    Labelled placeholders are in their place, and `CREDITS.md` is an empty table.
+  - Placeholder logo ("Clinic Name / YOUR SPECIALTY" with a cross emblem).
+    The SA Skincure logo redraw script was removed from main.
+  - `scripts/import-photos.mjs` has an empty job list with examples.
+  - The preview export is now `static-export/doctor-homepage.html`.
+  - Tests read names from `site.ts` instead of hard-coding Dr. Panda.
+  - README, CLAUDE.md and package name updated for the template.
+
+### Decisions and why
+- One repo, one branch per client: shared improvements land on `main` and are
+  merged into client branches, so every site benefits.
+- The template stays India-specific (Asia/Kolkata hours, +91 numbers, NMC
+  rules), because that's the market.
+
+### Still open
+- The SA Skincure items listed under Session 1 still apply on the `sa-skincure` branch.
+- `git log` on `main` still contains the SA Skincure photos (the repo is
+  private). If the template is ever shared publicly, start a fresh repo from
+  `main` instead of making this one public.
+- Vercel: set each client project's production branch to its client branch.
+
+---
+
+## Session 1 — 18–20 Nov 2026 · First build, real content, GitHub (now the `sa-skincure` branch)
 
 **Goal:** build the clinic homepage from `Dr Panda homepage build spec.md`,
 fill it with the clinic's real details, and get it ready to share and deploy.
@@ -100,7 +141,7 @@ fill it with the clinic's real details, and get it ready to share and deploy.
 
 ### How to resume
 ```bash
-cd ~/sa-skincure-website
+cd ~/doctor-website-template && git switch sa-skincure
 npx pnpm@9 install        # node_modules isn't in git
 npx pnpm@9 dev            # http://localhost:3000
 npx pnpm@9 test           # unit tests

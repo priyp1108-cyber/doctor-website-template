@@ -12,7 +12,7 @@ const hours: WeekHours = {
   sun: [],
 };
 
-/** An instant given as wall-clock time in Bhubaneswar. 2026-11-16 is a Monday. */
+/** An instant given as wall-clock time in India (Asia/Kolkata). 2026-11-16 is a Monday. */
 const ist = (local: string) => new Date(`${local}:00+05:30`);
 
 describe("kolkataNow", () => {

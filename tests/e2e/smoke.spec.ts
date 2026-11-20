@@ -7,7 +7,7 @@ const textOf = (href: string | null) => new URL(href!).searchParams.get("text");
 test("page loads with one H1 and every section", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toHaveCount(1);
-  await expect(page.locator("h1")).toHaveText("Dermatology for skin, hair, and nails");
+  await expect(page.locator("h1")).toHaveText(site.specialty.headline.replace(/\*/g, ""));
   for (const heading of ["What’s bothering you?", "Your visit, in three steps.", "Good to know", "Come and see us."]) {
     await expect(page.getByRole("heading", { level: 2, name: heading })).toBeAttached();
   }
@@ -27,11 +27,11 @@ test("switching concern changes the panel and its WhatsApp text", async ({ page 
   const cta = panel.getByRole("link", { name: /Book for hair fall/ });
   const href = await cta.getAttribute("href");
   expect(href).toContain(`https://wa.me/${number}?text=`);
-  expect(textOf(href)).toBe("Hello, I would like to see Dr. Panda about hair fall.");
+  expect(textOf(href)).toBe(`Hello, I would like to see ${site.doctor.shortName} about hair fall.`);
 
   await page.getByRole("button", { name: "Something else", exact: true }).click();
   const other = await panel.getByRole("link", { name: /Ask the clinic/ }).getAttribute("href");
-  expect(textOf(other)).toBe("Hello, I would like to see Dr. Panda about a skin concern.");
+  expect(textOf(other)).toBe(`Hello, I would like to see ${site.doctor.shortName} about a skin concern.`);
 });
 
 test("every WhatsApp link uses the clinic number", async ({ page }) => {
@@ -62,7 +62,7 @@ test("request form validates and opens WhatsApp with the right message", async (
   ]);
   expect(popup.url()).toContain(`https://wa.me/${number}?text=`);
   expect(textOf(popup.url())).toBe(
-    "Hello, I am Asha (+919876543210). I would like an appointment with Dr. Panda about pigmentation.",
+    `Hello, I am Asha (+919876543210). I would like an appointment with ${site.doctor.shortName} about pigmentation.`,
   );
 });
 

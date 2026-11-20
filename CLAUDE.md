@@ -1,11 +1,18 @@
-# SA Skincure Dr. Anil Kumar Panda — clinic homepage
+# Doctor website template
+
+`main` is a generic doctor's clinic homepage (placeholders everywhere,
+dermatology as the example specialty). Each client site lives on its own
+branch, e.g. `sa-skincure` for SA Skincure Dr. Anil Kumar Panda. Check which
+branch you're on (`git branch --show-current`) before editing: client content
+belongs only on its client branch, and shared fixes go on `main` first and
+are then merged into the client branches.
 
 Read `SESSION-LOG.md` first: it records what each session changed, what was
 decided and why, and what is still open. Before ending a session, add a new
 entry at the top using the template at the bottom of that file.
 
 ## Ground rules
-- All clinic facts live in `src/content/site.ts`. Components never hard-code them.
+- All clinic facts, including the specialty wording, live in `src/content/site.ts`. Components never hard-code them.
 - NMC advertising rules: no testimonials, ratings, superlatives ("best",
   "top", "leading"), guarantees, offers, or before/after photos. A unit test
   checks the wording in `site.ts`.

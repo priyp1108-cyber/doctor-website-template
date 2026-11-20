@@ -35,54 +35,70 @@ export type Faq = { question: string; answer: string };
 
 export type RecognitionPhoto = { image: string; alt: string; caption: string };
 
+/**
+ * The doctor's specialty. Change these (and the concerns and FAQs below) to
+ * use the template for another kind of practice.
+ */
+const specialty = {
+  /** "Dermatologist in <city>" in the page title and link previews. */
+  title: "Dermatologist",
+  /** schema.org medicalSpecialty, e.g. "Dermatology", "Pediatric", "Dentistry". */
+  field: "Dermatology",
+  /** Used in running text: "a dermatology clinic", "the dermatology community". */
+  adjective: "dermatology",
+  /** The hero heading, one word per rising word. */
+  headline: "Dermatology for skin, hair, and nails",
+  /** Short line on the link-preview image. */
+  tagline: "Skin, hair and nail care",
+};
+
 const doctor = {
-  name: "Dr. Anil Kumar Panda",
-  shortName: "Dr. Panda",
-  qualifications: "MBBS, MD (Skin & VD)", // as on the clinic's own poster and signboard
-  qualificationDetail: "[CONFIRM] MBBS — college · MD Dermatology — college",
+  name: "[CONFIRM] Dr. Full Name",
+  /** Used in sentences and WhatsApp messages: "see Dr. Surname about …". */
+  shortName: "[CONFIRM] Dr. Surname",
+  qualifications: "[CONFIRM] MBBS, MD (Dermatology)",
+  qualificationDetail: "[CONFIRM] MBBS — college · MD — college",
   yearsInPractice: null as number | null, // hide the item if null
-  registration: "[CONFIRM] Odisha Council of Medical Registration no.",
-  /** Teaching post, from the clinic's poster and signboard. */
-  position: "Assistant Professor, Department of Skin & VD, IMS & SUM Hospital, Bhubaneswar",
+  registration: "[CONFIRM] State Medical Council registration no.",
+  /** Teaching or hospital post; hidden if empty. */
+  position: "",
   memberships: [] as string[], // e.g. ["IADVL"]; hidden if empty
-  languages: ["English", "Hindi", "Odia"],
-  quote: "[CONFIRM] One sentence in his own words",
-  bio: "[CONFIRM] Short paragraph: training, years in Bhubaneswar, what to expect",
+  languages: ["English", "Hindi"],
+  quote: "[CONFIRM] One sentence in the doctor's own words",
+  bio: "[CONFIRM] Short paragraph: training, years in practice, what to expect",
   portrait: "/images/portrait.webp",
-  portraitAlt: "Dr. Anil Kumar Panda at his desk at SA Skincure, Bhubaneswar",
+  portraitAlt: "[CONFIRM] Dr. Full Name at the clinic",
   atWork: "/images/doctor-at-work.webp",
-  atWorkAlt: "Dr. Anil Kumar Panda talking with a patient in his consultation room",
+  atWorkAlt: "[CONFIRM] Dr. Full Name with a patient in the consultation room",
 };
 
 const clinic = {
-  // Name, address, phone and hours: from the Google Business Profile
-  // "S A SKINCURE | Dr. ANIL KUMAR PANDA" (checked 19 Nov 2026).
-  /** Full name: the site's name in search results, page title and structured data. */
-  name: "SA Skincure Dr. Anil Kumar Panda",
-  /** Short clinic name, for running text ("Inside SA Skincure"). */
-  shortName: "SA Skincure",
-  /** Vector logo (redrawn from the Google profile image; see scripts/logo-vector.py).
-   *  `full` is a 1600 px PNG for Google and link previews. Regenerate with `pnpm logo`. */
+  /** Full name: the site's name in search results, page title and structured data.
+   *  Match the Google Business Profile name exactly. */
+  name: "[CONFIRM] Clinic Name Dr. Full Name",
+  /** Short clinic name, for running text ("Inside Clinic Name"). */
+  shortName: "[CONFIRM] Clinic Name",
+  /** Logo (`full` is a PNG for Google and link previews). Regenerate the PNGs with `pnpm logo`. */
   logo: { src: "/images/logo.svg", width: 944, height: 180, full: "/images/logo-full.png" },
-  street: "N5/98, Block N5",
+  street: "[CONFIRM] Street",
   landmark: "", // optional; leave "" if there isn't a well-known one
-  area: "IRC Village, Nayapalli",
-  city: "Bhubaneswar",
-  state: "Odisha",
-  pin: "751015",
-  geo: { lat: 20.2978379, lng: 85.8140253 }, // for the map and structured data
-  mapsUrl: "https://maps.google.com/?cid=14699926951035334201",
+  area: "[CONFIRM] Area",
+  city: "[CONFIRM] City",
+  state: "[CONFIRM] State",
+  pin: "[CONFIRM]",
+  geo: { lat: 0, lng: 0 }, // for the map and structured data (right-click the pin in Google Maps)
+  mapsUrl: "[CONFIRM] Google Maps link to the Business Profile",
   mapImage: "/images/map.webp",
-  phone: "+91 76089 54504",
-  whatsapp: "917608954504", // digits only, used in wa.me (same number as phone, confirmed)
-  // 24h times, Asia/Kolkata. Each day can have several sessions.
+  phone: "+91XXXXXXXXXX",
+  whatsapp: "91XXXXXXXXXX", // digits only, with country code, used in wa.me
+  // 24h times, Asia/Kolkata. Each day can have several sessions; [] = closed.
   hours: {
-    mon: [["18:00", "21:00"]],
-    tue: [["18:00", "21:00"]],
-    wed: [["18:00", "21:00"]],
-    thu: [["18:00", "21:00"]],
-    fri: [["18:00", "21:00"]],
-    sat: [["18:00", "21:00"]],
+    mon: [["10:00", "13:00"], ["17:00", "20:00"]],
+    tue: [["10:00", "13:00"], ["17:00", "20:00"]],
+    wed: [["10:00", "13:00"], ["17:00", "20:00"]],
+    thu: [["10:00", "13:00"], ["17:00", "20:00"]],
+    fri: [["10:00", "13:00"], ["17:00", "20:00"]],
+    sat: [["10:00", "13:00"]],
     sun: [],
   } satisfies WeekHours as WeekHours,
   nextAvailable: "", // free text, e.g. "Today, 5:30 pm"; the card hides if empty
@@ -92,7 +108,7 @@ const clinic = {
   },
 };
 
-const approach = "[CONFIRM] two sentences in his words";
+const approach = "[CONFIRM] two sentences in the doctor's words";
 
 const concerns: Concern[] = [
   {
@@ -152,31 +168,12 @@ const concerns: Concern[] = [
 ];
 
 /**
- * Conference and CME photos (shown near the end of the page). Keep captions
- * factual: event, place, date. No "award-winning" or similar claims.
+ * Conference and CME photos, shown near the end of the page; the section is
+ * hidden while this list is empty. Keep captions factual (event, place, date),
+ * with no "award-winning" or similar claims. Example:
+ *   { image: "/images/recognition-1.webp", alt: "Dr. … at …", caption: "Event name, Month YYYY" }
  */
-const recognition: RecognitionPhoto[] = [
-  {
-    image: "/images/recognition-cuticon-memento.webp",
-    alt: "Dr. Anil Kumar Panda receiving a memento on stage at CUTICON Odisha 2024",
-    caption: "Receiving a memento at CUTICON Odisha 2024",
-  },
-  {
-    image: "/images/recognition-cuticon-group.webp",
-    alt: "Dr. Anil Kumar Panda with colleagues holding mementos at CUTICON Odisha 2024",
-    caption: "With colleagues at CUTICON Odisha 2024",
-  },
-  {
-    image: "/images/recognition-iadvl-cme.webp",
-    alt: "Dr. Anil Kumar Panda with fellow doctors at the IADVL Odisha CME on Therapeutic Updates",
-    caption: "IADVL Odisha CME on Therapeutic Updates, 19 March 2023",
-  },
-  {
-    image: "/images/recognition-cuticon-group-2.webp",
-    alt: "Dr. Anil Kumar Panda with fellow dermatologists at CUTICON Odisha 2024",
-    caption: "Among fellow dermatologists at CUTICON Odisha 2024",
-  },
-];
+const recognition: RecognitionPhoto[] = [];
 
 const faqs: Faq[] = [
   { question: "Do I need an appointment?", answer: "[CONFIRM]" },
@@ -190,6 +187,7 @@ const faqs: Faq[] = [
 export const site = {
   /** The site's full name (clinic + doctor), used for SEO everywhere. */
   name: clinic.name,
+  specialty,
   doctor,
   clinic,
   concerns,

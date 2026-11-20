@@ -30,7 +30,7 @@ describe("waLink", () => {
 describe("messages", () => {
   it("lower-cases the concern label", () => {
     expect(messages.concern({ slug: "hair-fall", label: "Hair fall" })).toBe(
-      "Hello, I would like to see Dr. Panda about hair fall.",
+      `Hello, I would like to see ${site.doctor.shortName} about hair fall.`,
     );
   });
 
@@ -40,7 +40,7 @@ describe("messages", () => {
 
   it("builds the request-form message", () => {
     expect(messages.request("Asha", "+919876543210", "acne")).toBe(
-      "Hello, I am Asha (+919876543210). I would like an appointment with Dr. Panda about acne.",
+      `Hello, I am Asha (+919876543210). I would like an appointment with ${site.doctor.shortName} about acne.`,
     );
   });
 });

@@ -1,8 +1,19 @@
-# Dr. Anil Kumar Panda — clinic homepage
+# Doctor website template
 
-One-page, mobile-first site for a dermatology clinic in Bhubaneswar. Every
-booking action is a WhatsApp (`wa.me`) or phone (`tel:`) link; there is no
-backend.
+One-page, mobile-first homepage for an Indian doctor's clinic. Every booking
+action is a WhatsApp (`wa.me`) or phone (`tel:`) link; there is no backend.
+
+`main` is the generic template, with placeholders throughout and dermatology
+as the example specialty. Each client site lives on its own branch:
+
+| Branch | Site |
+|---|---|
+| `sa-skincure` | SA Skincure Dr. Anil Kumar Panda, Bhubaneswar (dermatology) |
+
+**New client:** branch off `main` (`git switch -c <client-name> main`), then
+fill in `src/content/site.ts`, swap the photos and logo, and add the branch
+to the table above. Fixes that every site should get go on `main` first and
+are then merged into the client branches.
 
 Stack: Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 ·
 Motion · Lenis · Vitest · Playwright.
@@ -28,6 +39,10 @@ No pnpm? `npx pnpm@9 <command>` works too.
 Every fact on the page comes from this one file. Components never hard-code
 clinic details.
 
+- `specialty`: the page title ("Dermatologist in <city>"), hero heading,
+  link-preview tagline and the schema.org specialty. For a non-dermatology
+  practice, also rewrite `concerns` and `faqs`.
+
 - Anything starting with `[CONFIRM]` is a placeholder. While `pnpm dev` is
   running, the browser console lists every placeholder still left.
 - `phone` is how it is shown and dialled (`+91…`). `whatsapp` is digits only,
@@ -41,7 +56,7 @@ clinic details.
   memberships.
 - `geo` (latitude/longitude) drives the map embed and structured data. Copy
   them from Google Maps (right-click the pin).
-- `siteUrl`: the final domain, e.g. `https://drpanda.in`. Until it is set,
+- `siteUrl`: the final domain, e.g. `https://drsurname.in`. Until it is set,
   the site uses `NEXT_PUBLIC_SITE_URL`, then Vercel's production URL.
 - The name, address and phone must match the Google Business Profile
   exactly.
@@ -50,24 +65,14 @@ Compliance (NMC advertising rules): don't add testimonials, ratings, "best /
 No. 1 / top / leading", guarantees ("permanent", "100%"), offers, or
 before/after photos. A unit test fails if banned words appear in `site.ts`.
 This is a design rule, not legal advice; the doctor should check the final
-copy himself.
+copy themselves.
 
-## Swap the photos
+## Swap the photos and logo
 
-Real photos now live in `photos-source/` (from the clinic's Google Business
-Profile, `google-*.jpg`, and the clinic's own photos). `pnpm images:import`
-crops and converts them into `public/images/`; edit the list in
-`scripts/import-photos.mjs` to change a photo or its crop. Recognition photos
-and captions are listed in `site.ts` under `recognition`.
-
-Still a placeholder: `map.webp`. The concern panels have no photos and show text only; to add one, set `image` and `imageAlt` on that concern in `site.ts` (a lifestyle photo, never before/after or AI-generated).
-`pnpm images:placeholders` only fills in missing files and never overwrites a
-real photo.
-
-Placeholders live in `public/images/` as tinted, labelled `.webp` files.
-Replace each one with a real photo **of the same name** (JPG/PNG renamed to
-`.webp` won't work; export as WebP, or change the path in `site.ts`). Next.js
-serves resized AVIF/WebP automatically.
+`public/images/` holds tinted, labelled placeholders. Put the real photos in
+`photos-source/`, list them (with any crop) in `scripts/import-photos.mjs`
+and run `pnpm images:import` to write the web versions. Record every photo's
+source and licence in `photos-source/CREDITS.md`.
 
 | File | Used for | Suggested size |
 |---|---|---|
@@ -75,22 +80,23 @@ serves resized AVIF/WebP automatically.
 | `doctor-at-work.webp` | "The doctor" section | 1040 × 1080 |
 | `reception.webp`, `treatment-room.webp` | Clinic photo strip | 1280 × 960 |
 | `map.webp` | Static map shown before the interactive map loads | 1040 × 480 |
+| `recognition-*.webp` | Optional conference / CME photos (list them in `site.ts` → `recognition`; the section hides when empty) | 1400 wide |
 
-**Logo:** `public/images/logo.svg` is a vector redraw of the clinic's logo.
-The only copy online (Google Business Profile) is 250 px, so
-`scripts/logo-vector.py` traces the emblem and re-sets the lettering in
-open-licence fonts (Tinos, Arimo) at the original's measured positions.
-`pnpm logo` then renders the PNG logo and icons from it. If the clinic has
-the designer's original file, prefer that: save it as `logo.svg` and run
-`pnpm logo`.
+Concern panels show text only by default. To add a photo, set `image` and
+`imageAlt` on that concern in `site.ts`. Use a lifestyle photo, never
+before/after or AI-generated. Update the `*Alt` texts in `site.ts` to
+describe the real photos. `pnpm images:placeholders` only fills in missing
+files and never overwrites a real photo.
 
-Update the `imageAlt` / `portraitAlt` text in `site.ts` to describe the real photos.
-`pnpm images:placeholders` regenerates the placeholders.
+**Logo:** replace `public/images/logo.svg` (about 944 × 180, transparent
+background) and `public/images/emblem.svg` (square mark for icons) with the
+clinic's own artwork, then run `pnpm logo` to render the PNG logo, the
+browser-tab icon and the home-screen icon.
 
 ## Share a preview as one HTML file
 
 ```bash
-pnpm build && pnpm export:static   # → static-export/dr-panda-homepage.html
+pnpm build && pnpm export:static   # → static-export/doctor-homepage.html
 ```
 
 The file is self-contained (CSS, fonts, images inlined), so it can be emailed
@@ -100,8 +106,9 @@ concern switcher, booking bar, map and request form. Re-run after any change.
 
 ## Deploy to Vercel
 
-1. Push this folder to a GitHub repository.
-2. In Vercel: **Add New → Project**, import the repo. It detects Next.js and pnpm;
+1. Push the client's branch to GitHub.
+2. In Vercel: **Add New → Project**, import the repo and set the production
+   branch to the client's branch. It detects Next.js and pnpm;
    no settings needed.
 3. **Settings → Domains**: add the clinic's domain and follow the DNS steps.
 4. Set `siteUrl` in `site.ts` to that domain and redeploy.

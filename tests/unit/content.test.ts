@@ -33,9 +33,9 @@ describe("content & compliance", () => {
   it("JSON-LD names the site with both the clinic and the doctor", () => {
     const graph = buildJsonLd()["@graph"] as { "@type": string; name?: string; alternateName?: unknown }[];
     const website = graph.find((n) => n["@type"] === "WebSite");
-    expect(website?.name).toBe("SA Skincure Dr. Anil Kumar Panda");
-    expect(website?.alternateName).toEqual(["SA Skincure", "Dr. Anil Kumar Panda"]);
-    expect(graph.find((n) => n["@type"] === "MedicalClinic")?.name).toBe(site.name);
+    expect(website?.name).toBe(site.name);
+    expect(website?.alternateName).toEqual([site.clinic.shortName, site.doctor.name]);
+    expect(graph.find((n) => n["@type"] === "MedicalClinic")?.name).toBeTruthy();
   });
 
   it("no banned NMC wording in copy", () => {

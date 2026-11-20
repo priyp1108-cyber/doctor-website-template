@@ -25,13 +25,18 @@ const sans = Manrope({
   variable: "--font-manrope",
 });
 
-// The full name (clinic + doctor) leads the title so searches for either
-// "SA Skincure" or "Dr. Anil Kumar Panda" match it.
-const title = `${site.name} | Dermatologist in ${site.clinic.city}`;
+// The full name (clinic + doctor) leads the title so searches for either the
+// clinic or the doctor match it.
+const { specialty } = site;
+const title = `${site.name} | ${specialty.title} in ${site.clinic.city}`;
 const area = filled(site.clinic.area);
-const description = `${site.name}: ${site.doctor.name}'s dermatology clinic in ${
+const conditions = site.concerns
+  .filter((c) => c.slug !== "other")
+  .map((c) => c.label.toLowerCase())
+  .join(", ");
+const description = `${site.name}: ${site.doctor.name}'s ${specialty.adjective} clinic in ${
   area ? `${area}, ` : ""
-}${site.clinic.city} for acne, pigmentation, hair fall, fungal infections, eczema and psoriasis. Book on WhatsApp.`;
+}${site.clinic.city} for ${conditions}. Book on WhatsApp.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -39,7 +44,7 @@ export const metadata: Metadata = {
   description,
   applicationName: site.name,
   authors: [{ name: site.doctor.name }],
-  keywords: [site.name, site.clinic.shortName, site.doctor.name, `dermatologist ${site.clinic.city}`],
+  keywords: [site.name, site.clinic.shortName, site.doctor.name, `${specialty.title.toLowerCase()} ${site.clinic.city}`],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",

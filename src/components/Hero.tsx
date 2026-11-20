@@ -5,15 +5,11 @@ import { telLink } from "@/lib/links";
 import { OpenStatus } from "./OpenStatus";
 import { CalendarIcon, ChatIcon, PhoneIcon } from "./icons";
 
-/** Hero headline, word by word (each word rises in). Set `italic: true` on a word to accent it. */
-const headline: { text: string; italic?: boolean }[] = [
-  { text: "Dermatology" },
-  { text: "for" },
-  { text: "skin," },
-  { text: "hair," },
-  { text: "and" },
-  { text: "nails" },
-];
+/** Hero headline (from site.specialty.headline), word by word; each word rises in.
+ *  Wrap a word in *asterisks* there to set it in italics. */
+const headline: { text: string; italic?: boolean }[] = site.specialty.headline
+  .split(" ")
+  .map((w) => (/^\*.+\*[.,]?$/.test(w) ? { text: w.replace(/\*/g, ""), italic: true } : { text: w }));
 
 export function Hero() {
   const { doctor, clinic } = site;
