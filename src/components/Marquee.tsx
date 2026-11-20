@@ -1,4 +1,5 @@
 import { site } from "@/content/site";
+import { isPlaceholder } from "@/lib/placeholder";
 
 function items(): string[] {
   const d = site.doctor;
@@ -8,7 +9,7 @@ function items(): string[] {
     d.yearsInPractice ? `${d.yearsInPractice} years in practice` : "",
     d.languages.length ? `Consults in ${d.languages.join(", ")}` : "",
     ...d.memberships.map((m) => `Member, ${m}`),
-  ].filter(Boolean);
+  ].filter((text) => !isPlaceholder(text)); // drops empty and unconfirmed items
 }
 
 function Row({ list, real, duplicate = false }: { list: string[]; real: number; duplicate?: boolean }) {
@@ -27,7 +28,9 @@ function Row({ list, real, duplicate = false }: { list: string[]; real: number; 
 export function Marquee() {
   const list = items();
   // Repeat short lists so one copy is always wider than the screen.
-  const filledList = list.length < 6 ? [...list, ...list] : list;
+  if (list.length === 0) return null;
+  const filledList = [...list];
+  while (filledList.length < 6) filledList.push(...list);
   return (
     <section aria-label="Credentials" className="marquee on-dark overflow-hidden bg-ink py-6 font-serif text-[26px] text-paper">
       <div className="marquee-track">

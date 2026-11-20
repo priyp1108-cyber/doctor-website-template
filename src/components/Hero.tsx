@@ -45,11 +45,12 @@ export function Hero() {
               </span>
             ))}
           </h1>
-          {facts.length > 0 && (
-            <div className="hero-fade" style={{ ["--delay" as string]: "0.9s" }}>
-              <p className="mt-6 text-[18px] font-semibold tracking-[0.02em] text-ink-soft">{facts.join(" · ")}</p>
-            </div>
-          )}
+          <div className="hero-fade" style={{ ["--delay" as string]: "0.9s" }}>
+            <p className="mt-6 text-[18px] font-semibold tracking-[0.02em] text-ink-soft">
+              <span className="block text-ink">{doctor.name}</span>
+              {facts.length > 0 && <span className="block">{facts.join(" · ")}</span>}
+            </p>
+          </div>
           <div className="hero-fade mt-9 flex flex-wrap gap-3" style={{ ["--delay" as string]: "1s" }}>
             <a
               href={buildWaLink(messages.general())}
@@ -57,6 +58,7 @@ export function Hero() {
               rel="noopener"
               data-track="whatsapp_click"
               data-source="hero"
+              id="hero-whatsapp"
               className="btn lens lens-brand"
             >
               <ChatIcon /> Book on WhatsApp

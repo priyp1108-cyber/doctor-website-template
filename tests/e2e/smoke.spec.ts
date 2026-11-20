@@ -72,7 +72,10 @@ test.describe("mobile", () => {
   test("bottom booking bar shows at 390px with WhatsApp, Call and Map", async ({ page }) => {
     await page.goto("/");
     const bar = page.locator("[data-mobile-bar]");
-    await expect(bar).toBeVisible();
+    // Hidden while the hero's own WhatsApp button is on screen; shows once it scrolls away.
+    await expect(bar).toHaveCSS("opacity", "0");
+    await page.locator("#concerns").scrollIntoViewIfNeeded();
+    await expect(bar).toHaveCSS("opacity", "1");
     await expect(bar.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", new RegExp(`wa\\.me/${number}`));
     await expect(bar.getByRole("link", { name: /Call/ })).toHaveAttribute("href", /^tel:/);
     await expect(bar.getByRole("link", { name: /Map/ })).toHaveAttribute("href", /maps\.google\.com|google\.com\/maps/);

@@ -19,8 +19,8 @@ export function ClinicPhotos() {
   const city = site.clinic.city;
   const p = site.clinic.photos;
   const photos = [
-    { src: p.reception, alt: `Reception at ${clinicName}, ${city}`, h: "md:h-[440px]", y: 40 },
-    { src: p.treatment, alt: `Treatment room at ${clinicName}, ${city}`, h: "md:h-[520px]", y: -40 },
+    { src: p.reception, alt: `Reception at ${clinicName}, ${city}`, h: "md:h-[480px]", y: 40 },
+    { src: p.treatment, alt: `Treatment room at ${clinicName}, ${city}`, h: "md:h-[480px]", y: -40 },
   ];
 
   return (

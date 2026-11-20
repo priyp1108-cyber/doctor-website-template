@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { site } from "@/content/site";
+import { filled } from "@/lib/placeholder";
 import { buildWaLink, messages } from "@/lib/whatsapp";
 import { track } from "@/lib/analytics";
 import { useIdleModule } from "@/lib/useIdleModule";
@@ -41,12 +42,14 @@ export function Concerns() {
       <div className="flex flex-col justify-center p-8 md:p-12 lg:p-14">
         <h3 className="text-h3 text-ink">{concern.title}</h3>
         <p className="text-body mt-4 text-ink-soft">{concern.blurb}</p>
-        <p className="mt-6 border-l-2 border-accent pl-4 text-[16px] leading-relaxed text-ink-soft">
-          <span className="block text-[13px] font-bold tracking-[0.08em] text-muted uppercase">
-            How {site.doctor.shortName} approaches it
-          </span>
-          {concern.approach}
-        </p>
+        {filled(concern.approach) && (
+          <p className="mt-6 border-l-2 border-accent pl-4 text-[16px] leading-relaxed text-ink-soft">
+            <span className="block text-[13px] font-bold tracking-[0.08em] text-muted uppercase">
+              How {site.doctor.shortName} approaches it
+            </span>
+            {concern.approach}
+          </p>
+        )}
         <div className="mt-8">
           <a
             href={buildWaLink(messages.concern(concern))}

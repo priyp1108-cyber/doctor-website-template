@@ -1,5 +1,6 @@
 import { site } from "@/content/site";
 import { fullAddress, telLink } from "@/lib/links";
+import { filled } from "@/lib/placeholder";
 
 export function Footer() {
   const { doctor, clinic } = site;
@@ -13,10 +14,10 @@ export function Footer() {
         <div className="mt-6 space-y-1.5 text-[16px] text-ink-soft">
           <p>{fullAddress()}</p>
           <p>
-            <a href={telLink()} data-track="call_click" data-source="footer" className="underline underline-offset-4">
+            <a href={telLink()} data-track="call_click" data-source="footer" className="-my-2.5 inline-block py-2.5 underline underline-offset-4">
               {clinic.phone}
             </a>
-            {" · "}Registration: {doctor.registration}
+            {filled(doctor.registration) && <>{" · "}Registration: {doctor.registration}</>}
           </p>
         </div>
         <p className="mt-8 max-w-[70ch] border-t border-ink/10 pt-6 text-[14px] text-muted">

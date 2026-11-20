@@ -1,3 +1,4 @@
+import { filled } from "@/lib/placeholder";
 import { Reveal } from "./Reveal";
 
 const steps = [
@@ -42,7 +43,7 @@ export function VisitSteps() {
                   <span className="sr-only">Step {i + 1}: </span>
                   {s.title}
                 </h3>
-                <p className="text-body mt-3 max-w-[44ch] text-ink-soft">{s.body}</p>
+                {filled(s.body) && <p className="text-body mt-3 max-w-[44ch] text-ink-soft">{s.body}</p>}
               </div>
             </Reveal>
           ))}

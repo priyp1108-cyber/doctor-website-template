@@ -9,6 +9,11 @@ export function filled(value: string): string | undefined {
   return isPlaceholder(value) ? undefined : value;
 }
 
+/** Only the questions whose answer has been confirmed (page and structured data). */
+export function answeredFaqs<T extends { answer: string }>(faqs: readonly T[]): T[] {
+  return faqs.filter((f) => !isPlaceholder(f.answer));
+}
+
 /** Dotted paths of every string in `obj` that still starts with "[CONFIRM]". */
 export function findConfirmValues(obj: unknown, path = ""): string[] {
   if (typeof obj === "string") return obj.includes("[CONFIRM") ? [path || "(root)"] : [];

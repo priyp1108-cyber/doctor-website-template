@@ -22,24 +22,31 @@ export function Recognition() {
           education (CME) programmes, where doctors share new research and treatment updates.
         </Reveal>
 
-        <ul className="mt-12 grid gap-x-6 gap-y-10 md:grid-cols-2">
-          {photos.map((p, i) => (
-            <Reveal as="li" key={p.image} index={i % 2}>
-              <figure>
-                <div className="relative h-[260px] overflow-hidden rounded-[28px] bg-tint-mist sm:h-[340px]">
-                  <Image
-                    src={p.image}
-                    alt={p.alt}
-                    fill
-                    sizes="(min-width: 720px) 600px, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-                <figcaption className="mt-4 text-[16px] font-semibold text-ink-soft">{p.caption}</figcaption>
-              </figure>
-            </Reveal>
-          ))}
-        </ul>
+        {/* Phones: one swipeable row. Wider screens: all photos side by side. */}
+        <Reveal index={3} className="mt-12">
+          <ul
+            tabIndex={0}
+            aria-label="Conference photos"
+            className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 md:mx-0 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-4"
+          >
+            {photos.map((p) => (
+              <li key={p.image} className="w-[78%] shrink-0 snap-center md:w-auto">
+                <figure>
+                  <div className="relative h-[220px] overflow-hidden rounded-[28px] bg-tint-mist md:h-[260px] lg:h-[220px]">
+                    <Image
+                      src={p.image}
+                      alt={p.alt}
+                      fill
+                      sizes="(min-width: 1024px) 290px, (min-width: 720px) 50vw, 78vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <figcaption className="mt-4 text-[16px] font-semibold text-ink-soft">{p.caption}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );

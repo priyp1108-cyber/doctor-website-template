@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { site } from "@/content/site";
+import { filled, isPlaceholder } from "@/lib/placeholder";
 import { Reveal } from "./Reveal";
 
 export function Doctor() {
@@ -11,7 +12,9 @@ export function Doctor() {
     { term: "Languages", detail: d.languages.join(", ") },
     ...(d.yearsInPractice ? [{ term: "In practice", detail: `${d.yearsInPractice} years` }] : []),
     ...(d.memberships.length ? [{ term: "Memberships", detail: d.memberships.join(", ") }] : []),
-  ];
+  ].filter((f) => !isPlaceholder(f.detail)); // unconfirmed rows stay off the page
+  const quote = filled(d.quote);
+  const bio = filled(d.bio);
 
   return (
     <section id="doctor" className="on-dark section-y bg-ink text-paper" aria-labelledby="doctor-title">
@@ -25,11 +28,13 @@ export function Doctor() {
         <div className="md:py-6">
           <Reveal as="p" className="eyebrow text-accent">The doctor</Reveal>
           <Reveal as="h2" index={1} id="doctor-title" className="text-h2 mt-5 text-paper">
-            &ldquo;{d.quote}&rdquo;
+            {quote ? <>&ldquo;{quote}&rdquo;</> : d.name}
           </Reveal>
-          <Reveal as="p" index={2} className="text-body mt-8 max-w-[56ch] text-on-dark">
-            {d.bio}
-          </Reveal>
+          {bio && (
+            <Reveal as="p" index={2} className="text-body mt-8 max-w-[56ch] text-on-dark">
+              {bio}
+            </Reveal>
+          )}
           <Reveal as="dl" index={3} className="mt-12 border-t border-paper/15">
             {facts.map((f) => (
               <div key={f.term} className="grid gap-1 border-b border-paper/15 py-5 sm:grid-cols-[180px_1fr] sm:gap-6">

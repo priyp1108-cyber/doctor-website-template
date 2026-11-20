@@ -6,38 +6,44 @@ import { mapsLink, telLink } from "@/lib/links";
 import { ChatIcon, PhoneIcon, PinIcon } from "./icons";
 
 /**
- * Always-present booking actions: a floating pill on desktop, a bottom bar on
- * mobile. Hidden while the visit panel's own WhatsApp button is on screen.
+ * Bottom booking bar for phones (desktop has the header button). Hidden while
+ * the hero's or the visit panel's own WhatsApp button is on screen, so the
+ * same action never shows twice.
  */
 export function BookingBar() {
-  const [hidden, setHidden] = useState(false);
+  // null = not measured yet: with JS the bar waits (no flash over the hero); without JS it simply shows.
+  const [hidden, setHidden] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const target = document.getElementById("visit-whatsapp");
-    if (!target) return;
-    const io = new IntersectionObserver(([entry]) => setHidden(!!entry?.isIntersecting), { threshold: 0 });
-    io.observe(target);
+    const targets = ["hero-whatsapp", "visit-whatsapp"]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+    if (targets.length === 0) return;
+    const onScreen = new Set<Element>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) onScreen.add(e.target);
+          else onScreen.delete(e.target);
+        }
+        setHidden(onScreen.size > 0);
+      },
+      { threshold: 0 },
+    );
+    targets.forEach((t) => io.observe(t));
     return () => io.disconnect();
   }, []);
 
   const wa = buildWaLink(messages.general());
-  const state = hidden ? "pointer-events-none opacity-0 translate-y-4" : "opacity-100 translate-y-0";
+  const state =
+    hidden === null
+      ? "[.js_&]:pointer-events-none [.js_&]:opacity-0"
+      : hidden
+        ? "pointer-events-none opacity-0 translate-y-4"
+        : "opacity-100 translate-y-0";
 
   return (
     <div data-booking-bar data-hidden={hidden || undefined} inert={hidden || undefined}>
-      {/* Desktop pill */}
-      <a
-        href={wa}
-        target="_blank"
-        rel="noopener"
-        data-track="whatsapp_click"
-        data-source="bar"
-        className={`btn lens lens-sky fixed right-6 bottom-6 z-40 hidden transition-[opacity,transform] duration-300 md:inline-flex ${state}`}
-      >
-        <ChatIcon /> Chat with the clinic
-      </a>
-
-      {/* Mobile bar */}
       <nav
         aria-label="Book a visit"
         data-mobile-bar

@@ -9,7 +9,97 @@ entry, and fill it in before ending the session.
 
 ---
 
-## Session 1 — 18–20 Nov 2026 · First build, real content, GitHub
+## Session 3 — 20 Nov 2026 · Design critique and fixes
+
+**Goal:** review the UI and flow on desktop and phone, then fix what does not
+need the clinic's input.
+
+### What changed
+- Unconfirmed content is hidden instead of printed. Marquee items, the
+  concern "approach" block, the doctor quote, bio and fact rows, the step 3
+  text, FAQ answers and the footer registration only render once their
+  `[CONFIRM]` value is replaced. The FAQ structured data skips unanswered
+  questions too (`answeredFaqs` in `src/lib/placeholder.ts`).
+- Hero now names the doctor above the qualifications.
+- Booking bar is phone-only. The floating desktop pill is gone (it covered
+  text; the header button does the same job). On phones the bar stays hidden
+  while the hero's or the form's WhatsApp button is on screen.
+- Recognition is one swipeable row on phones and four across on desktop
+  (was a 2×2 grid of large photos; about 1,080px shorter on a phone).
+- Clinic photos are the same height; the request form card no longer
+  stretches; the form's concern select starts on "Choose one"; phone-number
+  links have a 44px tap area.
+- Playwright mobile test updated for the new booking-bar behaviour.
+
+### Decisions and why
+- While the doctor's quote is unconfirmed, the Doctor section heading falls
+  back to his name, so the section still has a heading.
+- Kept the header "Book a visit" button on phones: without it the phone
+  header is only a logo, and hiding the bottom bar at the hero already
+  removes the triple WhatsApp button.
+- These are shared component fixes, so they were committed on `main` first
+  and then cherry-picked onto `sa-skincure`. A plain `git merge main` is not
+  safe there: `main` sits on top of the commit `sa-skincure` points at, so
+  the merge would fast-forward the client branch into the generic template
+  and replace the clinic's content with placeholders. Cherry-pick shared
+  fixes onto client branches instead.
+
+### Still open
+- The 8 `[CONFIRM]` values in `site.ts` (plus the step 3 text in
+  `VisitSteps.tsx`) still need the clinic's facts. Only one FAQ shows until
+  the other two answers are confirmed.
+- `public/images/map.webp` is still the placeholder that reads "STATIC MAP OF
+  THE CLINIC". It needs a real static map of the pin.
+- Not done from the critique: a phone nav menu, fewer type sizes (14 in
+  use), tab roles on the concern picker, a pause control for the marquee
+  (it pauses on hover only).
+- `.claude/launch.json` was added locally so the app's browser pane can start
+  the dev server.
+
+---
+
+## Session 2 — 20 Nov 2026 · Generic template on main, client on a branch
+
+**Goal:** make the repo a reusable doctor-website template, with each client
+site on its own branch.
+
+### What changed
+- GitHub repo renamed `sa-skincure-website` → `priyp1108-cyber/doctor-website-template`
+  (still private). Local folder renamed to `~/doctor-website-template`.
+- New branch `sa-skincure`: the SA Skincure site exactly as it was at the end
+  of session 1 (Session 1 below describes that branch).
+- `main` is now the generic template:
+  - `site.ts` uses `[CONFIRM]` placeholders for the doctor and clinic,
+    sample hours, an empty `recognition` list (section hidden) and no position.
+  - New `site.specialty` (title, schema field, adjective, hero headline,
+    tagline). It drives the page title, description, link-preview image,
+    JSON-LD `medicalSpecialty`, hero heading and recognition text.
+    `*word*` in the headline sets that word in italics.
+  - Clinic photos, conference photos and `photos-source/` originals removed.
+    Labelled placeholders are in their place, and `CREDITS.md` is an empty table.
+  - Placeholder logo ("Clinic Name / YOUR SPECIALTY" with a cross emblem).
+    The SA Skincure logo redraw script was removed from main.
+  - `scripts/import-photos.mjs` has an empty job list with examples.
+  - The preview export is now `static-export/doctor-homepage.html`.
+  - Tests read names from `site.ts` instead of hard-coding Dr. Panda.
+  - README, CLAUDE.md and package name updated for the template.
+
+### Decisions and why
+- One repo, one branch per client: shared improvements land on `main` and are
+  merged into client branches, so every site benefits.
+- The template stays India-specific (Asia/Kolkata hours, +91 numbers, NMC
+  rules), because that's the market.
+
+### Still open
+- The SA Skincure items listed under Session 1 still apply on the `sa-skincure` branch.
+- `git log` on `main` still contains the SA Skincure photos (the repo is
+  private). If the template is ever shared publicly, start a fresh repo from
+  `main` instead of making this one public.
+- Vercel: set each client project's production branch to its client branch.
+
+---
+
+## Session 1 — 18–20 Nov 2026 · First build, real content, GitHub (now the `sa-skincure` branch)
 
 **Goal:** build the clinic homepage from `Dr Panda homepage build spec.md`,
 fill it with the clinic's real details, and get it ready to share and deploy.
@@ -100,7 +190,7 @@ fill it with the clinic's real details, and get it ready to share and deploy.
 
 ### How to resume
 ```bash
-cd ~/sa-skincure-website
+cd ~/doctor-website-template && git switch sa-skincure
 npx pnpm@9 install        # node_modules isn't in git
 npx pnpm@9 dev            # http://localhost:3000
 npx pnpm@9 test           # unit tests
