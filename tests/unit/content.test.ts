@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
 import { findConfirmValues } from "@/lib/placeholder";
 import { buildJsonLd } from "@/lib/schema";
+import { articles, audiences } from "@/content/journal";
+import { allTreatments } from "@/lib/pages";
 
 const srcDir = fileURLToPath(new URL("../../src/", import.meta.url));
 const files = (dir: string): string[] =>
@@ -38,8 +40,24 @@ describe("content & compliance", () => {
     expect(graph.find((n) => n["@type"] === "MedicalClinic")?.name).toBe(site.name);
   });
 
+  it("treatment slugs are unique across groups", () => {
+    const slugs = allTreatments().map((t) => t.treatment.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+  });
+
+  it("journal articles have unique slugs, a known audience, ISO dates and real related treatments", () => {
+    const slugs = articles.map((a) => a.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+    const treatments = new Set(allTreatments().map((t) => t.treatment.slug));
+    for (const a of articles) {
+      expect(Object.keys(audiences)).toContain(a.audience);
+      expect(a.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      for (const r of a.related ?? []) expect(treatments.has(r), `${a.slug} → ${r}`).toBe(true);
+    }
+  });
+
   it("no banned NMC wording in copy", () => {
-    const copy = JSON.stringify(site);
+    const copy = JSON.stringify(site) + JSON.stringify(articles);
     const banned = /\b(best|no\.\s?1|number one|top|leading|guarantee[d]?|permanent|100\s?%|discount|offer)\b/i;
     expect(copy).not.toMatch(banned);
   });

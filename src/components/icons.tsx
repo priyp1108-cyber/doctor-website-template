@@ -73,3 +73,53 @@ export const ChevronIcon = (p: IconProps) => (
     <path d="m6 9 6 6 6-6" />
   </Svg>
 );
+
+export const ChevronDownIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="m6 9 6 6 6-6" />
+  </Svg>
+);
+
+export const MenuIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </Svg>
+);
+
+export const CloseIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </Svg>
+);
+
+export const PauseIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M9 6v12M15 6v12" />
+  </Svg>
+);
+
+export const PlayIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M8 5.5v13l10.5-6.5L8 5.5Z" />
+  </Svg>
+);
+
+export const CapIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M2.5 9.5 12 5l9.5 4.5L12 14 2.5 9.5Z" />
+    <path d="M6.5 11.5v4c1.5 1.5 3.4 2.2 5.5 2.2s4-.7 5.5-2.2v-4M21.5 9.5v5" />
+  </Svg>
+);
+
+export const BuildingIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 20.5h16M6 20.5V8l6-3.5L18 8v12.5M10 20.5v-4h4v4M9.5 10.5h1M13.5 10.5h1M9.5 13.5h1M13.5 13.5h1" />
+  </Svg>
+);
+
+export const LanguageIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 5.5h9M8.5 4v1.5c0 4-2 7-5 8.5M6 9c1 2 3 3.8 5.5 4.8" />
+    <path d="m12 20 4-9 4 9M13.4 17h5.2" />
+  </Svg>
+);

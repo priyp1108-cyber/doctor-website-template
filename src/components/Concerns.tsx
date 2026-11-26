@@ -57,7 +57,7 @@ export function Concerns() {
             rel="noopener"
             data-track="whatsapp_click"
             data-source={`concern:${concern.slug}`}
-            className="btn lens lens-sky"
+            className="btn btn-primary"
           >
             <ChatIcon /> {concern.button}
           </a>

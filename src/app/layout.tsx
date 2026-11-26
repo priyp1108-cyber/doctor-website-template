@@ -1,28 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Manrope } from "next/font/google";
+import { Figtree } from "next/font/google";
 import Script from "next/script";
 import { site } from "@/content/site";
 import { filled } from "@/lib/placeholder";
 import { siteUrl } from "@/lib/links";
-import { buildJsonLd, jsonLdString } from "@/lib/schema";
 import { RevealObserver } from "@/components/RevealObserver";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { TrackClicks } from "@/components/TrackClicks";
 import { ConfirmWarning } from "@/components/ConfirmWarning";
 import "./globals.css";
 
-const serif = Instrument_Serif({
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-instrument-serif",
-});
-const sans = Manrope({
+const figtree = Figtree({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-manrope",
+  variable: "--font-figtree",
 });
 
 // The full name (clinic + doctor) leads the title so searches for either
@@ -35,12 +27,13 @@ const description = `${site.name}: ${site.doctor.name}'s dermatology clinic in $
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title,
+  // Inner pages set their own title; the template adds the site name.
+  title: { default: title, template: `%s | ${site.name}` },
   description,
   applicationName: site.name,
   authors: [{ name: site.doctor.name }],
   keywords: [site.name, site.clinic.shortName, site.doctor.name, `dermatologist ${site.clinic.city}`],
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", types: { "application/rss+xml": [{ url: "/journal/rss.xml", title: `${site.clinic.shortName} Journal` }] } },
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -54,7 +47,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F7F8FC",
+  themeColor: "#F6F9FC",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -68,10 +61,9 @@ const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${serif.variable} ${sans.variable}`} suppressHydrationWarning>
+    <html lang="en-IN" className={figtree.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: jsFlag }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(buildJsonLd()) }} />
       </head>
       <body>
         {children}

@@ -99,7 +99,7 @@ export function RequestForm() {
             <ChevronIcon className="pointer-events-none absolute top-1/2 right-4 mt-1 -translate-y-1/2 text-ink" />
           </div>
         </div>
-        <button id="visit-whatsapp" type="submit" className="btn lens lens-brand w-full">
+        <button id="visit-whatsapp" type="submit" className="btn btn-primary w-full">
           <ChatIcon /> Send on WhatsApp
         </button>
         <p className="text-center text-[14px] text-muted">The clinic confirms your slot by message.</p>

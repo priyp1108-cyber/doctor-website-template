@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="border-t border-ink/10 pt-14 pb-10">
       <div className="wrap">
-        <p className="font-serif text-[32px] leading-tight text-ink">{site.name}</p>
+        <p className="font-display text-[28px] font-bold leading-tight tracking-[-0.01em] text-ink">{site.name}</p>
         <p className="mt-1 text-[15px] font-semibold text-muted">
           {doctor.name}, {doctor.qualifications}
         </p>

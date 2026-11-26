@@ -2,7 +2,7 @@
  * Plain-JS behaviour for the single-file static export (scripts/export-static.mjs).
  * It stands in for the React client components, which the export strips out:
  * reveals and loops, the open-now pill, the concern switcher, the booking bar,
- * the tap-to-load map and the request form. It reuses the same content and
+ * the tap-to-load map, the request form, the header menus and the hero slider. It reuses the same content and
  * helpers as the real site so the two never drift apart.
  */
 import { site } from "@/content/site";
@@ -10,6 +10,8 @@ import { getOpenStatus } from "@/lib/hours";
 import { buildWaLink, concernSubject, messages } from "@/lib/whatsapp";
 import { normaliseIndianMobile } from "@/lib/phone";
 import { mapsEmbedUrl } from "@/lib/links";
+import { initTreatmentsMenu } from "@/lib/treatmentsMenu";
+import { initHeroSlider } from "@/lib/heroSlider";
 
 declare global {
   interface Window {
@@ -202,3 +204,5 @@ concerns();
 bookingBar();
 mapEmbed();
 requestForm();
+initTreatmentsMenu();
+initHeroSlider();

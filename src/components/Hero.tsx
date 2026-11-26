@@ -2,109 +2,126 @@ import Image from "next/image";
 import { site } from "@/content/site";
 import { buildWaLink, messages } from "@/lib/whatsapp";
 import { telLink } from "@/lib/links";
+import { HeroSliderEnhancer } from "./HeroSliderEnhancer";
 import { OpenStatus } from "./OpenStatus";
-import { CalendarIcon, ChatIcon, PhoneIcon } from "./icons";
+import { ChatIcon, PauseIcon, PhoneIcon, PlayIcon } from "./icons";
 
-/** Hero headline, word by word (each word rises in). Set `italic: true` on a word to accent it. */
-const headline: { text: string; italic?: boolean }[] = [
-  { text: "Dermatology" },
-  { text: "for" },
-  { text: "skin," },
-  { text: "hair," },
-  { text: "and" },
-  { text: "nails" },
-];
-
+/**
+ * Hero: a crossfading slider of the clinic's own photos with a still text card.
+ * Phones: photo on top, card below. Desktop: card floats over the photos.
+ */
 export function Hero() {
-  const { doctor, clinic } = site;
-  const facts = [
-    doctor.qualifications,
-    doctor.yearsInPractice ? `${doctor.yearsInPractice} years in practice` : null,
-  ].filter(Boolean);
+  const { doctor, hero } = site;
+  const slides = hero.slides;
 
   return (
-    <section id="top" className="relative overflow-hidden" aria-labelledby="hero-title">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="blob blob-1 -top-24 -left-24 size-[460px] [--blob:var(--color-accent)] opacity-45" />
-        <div className="blob blob-2 top-10 right-[-10%] size-[520px] [--blob:var(--color-tint-sky)]" />
-        <div className="blob blob-3 bottom-[-160px] left-[30%] size-[480px] [--blob:var(--color-tint-periwinkle)]" />
-      </div>
-
-      <div className="wrap grid items-center gap-14 pt-10 pb-20 md:pt-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10 lg:pb-28">
-        <div>
-          <OpenStatus />
-          <h1 id="hero-title" className="text-h1 mt-6 max-w-[12ch] text-ink">
-            {headline.map((w, i) => (
-              <span key={i}>
-                <span className="word-mask">
-                  <span className={`word ${w.italic ? "italic" : ""}`} style={{ ["--i" as string]: i }}>
-                    {w.text}
-                  </span>
-                </span>
-                {i < headline.length - 1 && " "}
-              </span>
-            ))}
-          </h1>
-          <div className="hero-fade" style={{ ["--delay" as string]: "0.9s" }}>
-            <p className="mt-6 text-[18px] font-semibold tracking-[0.02em] text-ink-soft">
-              <span className="block text-ink">{doctor.name}</span>
-              {facts.length > 0 && <span className="block">{facts.join(" · ")}</span>}
-            </p>
-          </div>
-          <div className="hero-fade mt-9 flex flex-wrap gap-3" style={{ ["--delay" as string]: "1s" }}>
-            <a
-              href={buildWaLink(messages.general())}
-              target="_blank"
-              rel="noopener"
-              data-track="whatsapp_click"
-              data-source="hero"
-              id="hero-whatsapp"
-              className="btn lens lens-brand"
-            >
-              <ChatIcon /> Book on WhatsApp
-            </a>
-            <a
-              href={telLink()}
-              data-track="call_click"
-              data-source="hero"
-              className="btn lens lens-clear"
-            >
-              <PhoneIcon /> Call the clinic
-            </a>
-          </div>
-        </div>
-
-        <div className="relative mx-auto w-full max-w-[480px] lg:mr-0">
-          <div className="hero-portrait-in" style={{ ["--delay" as string]: "0.4s" }}>
-            <div className="float-big">
-              <div className="relative h-[440px] overflow-hidden rounded-[240px_240px_32px_32px] bg-tint-sky shadow-soft sm:h-[520px] lg:h-[560px]">
+    <section id="top" className="pt-4 pb-6 md:pt-6" aria-labelledby="hero-title">
+      <div className="wrap">
+        <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white shadow-card lg:min-h-[620px] lg:bg-ink">
+          {/* Photos */}
+          <div
+            data-hero-slider
+            role="region"
+            aria-roledescription="carousel"
+            aria-label={`Photos of ${site.clinic.shortName}`}
+            className="relative aspect-[4/3] sm:aspect-[16/9] lg:absolute lg:inset-0 lg:aspect-auto"
+          >
+            {slides.map((s, i) => (
+              <div
+                key={s.image}
+                data-hero-slide
+                data-label={s.label}
+                data-active={i === 0 ? "" : undefined}
+                aria-hidden={i === 0 ? "false" : "true"}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} of ${slides.length}: ${s.label}`}
+                className="hero-slide absolute inset-0"
+              >
                 <Image
-                  src={doctor.portrait}
-                  alt={doctor.portraitAlt}
+                  src={s.image}
+                  alt={s.alt}
                   fill
-                  priority
-                  fetchPriority="high"
-                  sizes="(min-width: 1024px) 480px, (min-width: 520px) 480px, 92vw"
-                  className="object-cover object-top"
+                  priority={i === 0}
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  sizes="(min-width: 1240px) 1240px, 100vw"
+                  className="object-cover"
+                  style={{ objectPosition: s.focus ?? "50% 50%" }}
                 />
               </div>
+            ))}
+            {/* Shade under the controls so they stay readable on any photo. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink/70 to-transparent"
+            />
+
+            {slides.length > 1 && (
+              <div className="absolute right-3 bottom-3 left-3 z-10 flex items-center justify-between gap-3 sm:right-5 sm:bottom-4 sm:left-auto sm:justify-end">
+                <span data-hero-label aria-hidden="true" className="text-[14px] font-semibold text-white">
+                  {slides[0]!.label}
+                </span>
+                <div className="flex items-center gap-1">
+                  <div className="flex items-center" role="group" aria-label="Choose a photo">
+                    {slides.map((s, i) => (
+                      <button
+                        key={s.image}
+                        type="button"
+                        data-hero-dot
+                        aria-label={`Show photo ${i + 1}: ${s.label}`}
+                        aria-current={i === 0 ? "true" : "false"}
+                        className="grid h-11 cursor-pointer place-items-center px-1"
+                      >
+                        <span className="hero-dot block" />
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    data-hero-toggle
+                    aria-label="Pause slideshow"
+                    className="grid size-11 cursor-pointer place-items-center rounded-full border border-white/60 bg-ink/45 text-white backdrop-blur-sm"
+                  >
+                    <PauseIcon size={18} className="icon-pause" />
+                    <PlayIcon size={18} className="icon-play" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Text card: below the photo on phones, over it on desktop. */}
+          <div className="relative z-10 p-6 sm:p-9 lg:absolute lg:top-1/2 lg:left-8 lg:w-[min(540px,48%)] lg:-translate-y-1/2 lg:rounded-[var(--radius-card)] lg:bg-white lg:p-10 lg:shadow-soft">
+            <OpenStatus />
+            <h1 id="hero-title" className="text-hero hero-fade mt-5 text-ink">
+              {hero.headline}
+            </h1>
+            <p className="hero-fade mt-5 text-[17px] leading-relaxed text-ink-soft" style={{ ["--delay" as string]: "0.1s" }}>
+              <span className="block font-semibold text-ink">
+                {doctor.name}, {doctor.qualifications}
+              </span>
+              {doctor.position}
+            </p>
+            <div className="hero-fade mt-7 flex flex-wrap gap-3" style={{ ["--delay" as string]: "0.2s" }}>
+              <a
+                href={buildWaLink(messages.general())}
+                target="_blank"
+                rel="noopener"
+                data-track="whatsapp_click"
+                data-source="hero"
+                id="hero-whatsapp"
+                className="btn btn-primary"
+              >
+                <ChatIcon /> Book on WhatsApp
+              </a>
+              <a href={telLink()} data-track="call_click" data-source="hero" className="btn btn-secondary">
+                <PhoneIcon /> Call the clinic
+              </a>
             </div>
           </div>
-          {clinic.nextAvailable && (
-            <div className="hero-fade-in absolute -bottom-6 -left-2 sm:-left-10" style={{ ["--delay" as string]: "1s" }}>
-              <div className="float-late flex items-center gap-3 rounded-3xl bg-white px-5 py-4 shadow-soft">
-                <span className="grid size-11 place-items-center rounded-full bg-tint-sky text-brand">
-                  <CalendarIcon />
-                </span>
-                <span>
-                  <span className="block text-[13px] font-bold tracking-[0.08em] text-muted uppercase">Next available</span>
-                  <span className="block text-[17px] font-semibold text-ink">{clinic.nextAvailable}</span>
-                </span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
+      <HeroSliderEnhancer />
     </section>
   );
 }

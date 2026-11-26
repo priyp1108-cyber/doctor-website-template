@@ -18,7 +18,8 @@ export function BookingBar() {
     const targets = ["hero-whatsapp", "visit-whatsapp"]
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => !!el);
-    if (targets.length === 0) return;
+    // Inner pages have no hero/visit button: show the bar straight away.
+    if (targets.length === 0) return setHidden(false);
     const onScreen = new Set<Element>();
     const io = new IntersectionObserver(
       (entries) => {
@@ -50,13 +51,13 @@ export function BookingBar() {
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-paper/85 px-3 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] backdrop-blur-[14px] transition-[opacity,transform] duration-300 md:hidden ${state}`}
       >
         <div className="grid grid-cols-[2fr_1fr_1fr] gap-2">
-          <a href={wa} target="_blank" rel="noopener" data-track="whatsapp_click" data-source="bar" className="btn btn-sm lens lens-brand gap-2 px-3">
+          <a href={wa} target="_blank" rel="noopener" data-track="whatsapp_click" data-source="bar" className="btn btn-sm btn-primary gap-2 px-3">
             <ChatIcon /> WhatsApp
           </a>
-          <a href={telLink()} data-track="call_click" data-source="bar" className="btn btn-sm lens lens-clear gap-1.5 px-2">
+          <a href={telLink()} data-track="call_click" data-source="bar" className="btn btn-sm btn-secondary gap-1.5 px-2">
             <PhoneIcon size={18} /> Call
           </a>
-          <a href={mapsLink()} target="_blank" rel="noopener" data-track="map_click" data-source="bar" className="btn btn-sm lens lens-clear gap-1.5 px-2">
+          <a href={mapsLink()} target="_blank" rel="noopener" data-track="map_click" data-source="bar" className="btn btn-sm btn-secondary gap-1.5 px-2">
             <PinIcon size={18} /> Map
           </a>
         </div>

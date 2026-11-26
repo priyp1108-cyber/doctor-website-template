@@ -8,10 +8,10 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 // Brand tokens (mirrors globals.css; next/og cannot read CSS variables).
-const ink = "#14304F";
-const paper = "#F7F8FC";
-const accent = "#7CC4F0";
-const brand = "#1B6BB0";
+const ink = "#142A5C";
+const paper = "#F6F9FC";
+const accent = "#12A6EC";
+const brand = "#26448F";
 
 export default async function OpengraphImage() {
   const logo = await readFile(path.join(process.cwd(), "public", site.clinic.logo.full));
@@ -53,7 +53,7 @@ export default async function OpengraphImage() {
             {`Dermatologist · ${site.clinic.city}`}
           </div>
           <div style={{ fontSize: 84, lineHeight: 1.05, letterSpacing: -2, marginTop: 16 }}>{site.doctor.name}</div>
-          <div style={{ fontSize: 40, marginTop: 24, color: "#D7E2EE" }}>Skin, hair and nail care</div>
+          <div style={{ fontSize: 40, marginTop: 24, color: "#D9E4F2" }}>Skin, hair and nail care</div>
         </div>
         <div style={{ display: "flex" }}>
           <div style={{ background: brand, color: paper, borderRadius: 999, padding: "18px 34px", fontSize: 30, fontWeight: 700 }}>

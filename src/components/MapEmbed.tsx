@@ -5,7 +5,7 @@ import { useState } from "react";
 import { site } from "@/content/site";
 import { mapsEmbedUrl } from "@/lib/links";
 
-/** Static map image; the interactive Google Maps embed loads only on tap. */
+/** Static map image (OpenStreetMap, built by scripts/make-map.mjs); the interactive Google Maps embed loads only on tap. */
 export function MapEmbed() {
   const [live, setLive] = useState(false);
   return (
@@ -31,6 +31,16 @@ export function MapEmbed() {
             Tap to load the map
           </span>
         </button>
+      )}
+      {!live && (
+        <a
+          href="https://www.openstreetmap.org/copyright"
+          target="_blank"
+          rel="noopener"
+          className="absolute right-2 bottom-2 rounded bg-paper/85 px-1.5 py-0.5 text-[11px] text-ink-soft"
+        >
+          © OpenStreetMap contributors
+        </a>
       )}
     </div>
   );

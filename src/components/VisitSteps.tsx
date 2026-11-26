@@ -34,7 +34,7 @@ export function VisitSteps() {
             <Reveal as="li" key={s.title} index={i + 1} className="relative flex gap-7 pb-12 last:pb-0">
               <span
                 aria-hidden="true"
-                className="relative z-10 grid size-12 shrink-0 place-items-center rounded-full bg-accent font-serif text-[24px] text-ink"
+                className="relative z-10 grid size-12 shrink-0 place-items-center rounded-full bg-brand font-display text-[20px] font-bold text-white"
               >
                 {i + 1}
               </span>

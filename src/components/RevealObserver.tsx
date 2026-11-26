@@ -20,7 +20,7 @@ export function RevealObserver() {
     document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
     const stop = () => io.disconnect();
 
-    // Start decorative CSS loops (blobs, float, marquee, pulse) once the page
+    // Start decorative CSS loops (blobs, float, pulse) once the page
     // has loaded and the main thread is idle.
     const root = document.documentElement;
     let idle = 0;

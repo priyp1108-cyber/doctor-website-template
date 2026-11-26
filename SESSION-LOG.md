@@ -9,6 +9,203 @@ entry, and fill it in before ending the session.
 
 ---
 
+## Session 6 — 26 Nov 2026 · Phases 2–4: treatment pages, Journal, For doctors
+
+**Goal:** finish the site plan: 14 treatment pages, the Journal (blog) and
+a For doctors page, with visible placeholders wherever the clinic's facts
+are missing.
+
+### What changed
+- **Placeholders on inner pages:** `<Pending>` (dashed "To add" box) marks
+  every missing fact. `NEXT_PUBLIC_HIDE_PENDING=1` hides the boxes, the
+  draft articles and any section that would be empty: set it for launch
+  (`src/lib/pending.ts`). Home-page placeholders still hide as before.
+- **Shared shell:** `PageShell` (skip link, header, footer, booking bar),
+  `PageIntro` (breadcrumbs + BreadcrumbList JSON-LD + H1), `BookPanel`
+  (dark WhatsApp/call/hours panel), `pageMetadata()` in `src/lib/meta.ts`
+  (title template `%s | site name`, own canonical per page). Home JSON-LD
+  moved from the layout into `page.tsx`.
+- **Header:** links are now real pages (`/#doctor`, `/journal`,
+  `/for-doctors`, `/#visit`); the logo goes to `/`. Treatments in the menu
+  are links to their pages; the details card has "Read more" + "Ask about
+  this". Phone menu has "Read more" per treatment and an "all treatments" link.
+- **Phase 2 — Treatments:** `/treatments` (grouped cards) and
+  `/treatments/[slug]` for all 14, from one template: who it helps, what
+  happens, sessions, aftercare, questions, "who you will see", more in the
+  group, related Journal articles, booking panel, MedicalWebPage JSON-LD.
+  Optional `details` (steps, sessions, aftercare, faqs) on each treatment in
+  `site.ts`; missing parts show "To add". Home overview chips now link.
+- **Phase 3 — Journal:** content in `src/content/journal.ts` (5 DRAFT
+  outlines: 3 for patients, 2 for clinicians). `/journal`,
+  `/journal/for/patients`, `/journal/for/clinicians` (filter = links, so it
+  works without JS and each view has a URL), `/journal/[slug]` with
+  BlogPosting JSON-LD (drafts are `noindex`), `/journal/rss.xml`, and a
+  "From the Journal" strip on the home page before the FAQ.
+- **Phase 4 — For doctors:** `/for-doctors`: profile, clinical interests,
+  training timeline, publications, talks + conferences, CV, clinician notes,
+  and green (`btn-peer`) refer / invite to speak / research WhatsApp cards.
+  Content in `site.forDoctors`.
+- `BookingBar` now shows on pages without a hero/visit button (it stayed
+  invisible there before).
+- **Map:** checked the address in Google Maps. The clinic's own listing
+  (N5/98) is at 20.2978379, 85.8140253, the same pin and listing ID already
+  in `site.ts`, so the location data was correct. A plain address search
+  lands ~200 m west on N-5-74, so it is not used. The placeholder
+  `map.webp` is replaced by a real OpenStreetMap image with a navy pin
+  (`npx pnpm@9 map`, `scripts/make-map.mjs`); the "© OpenStreetMap
+  contributors" credit shows on the map. Google map images can't be saved
+  under its terms, so they are not used.
+- Sitemap lists every page (approved articles only). Dev console also lists
+  treatment pages without details, draft articles and empty doctor lists.
+- Tests: unit (unique treatment slugs, article checks, NMC wording now also
+  covers `journal.ts`); 6 new e2e tests (all 14 treatment pages, Journal
+  filter URLs, RSS, home strip, For doctors contact messages, phone overflow
+  + booking bar). 71 unit and 17 e2e tests pass.
+
+### Decisions and why
+- Journal articles are drafts written for the template, not Dr. Panda's
+  words. They must not go live until he rewrites/approves them, so drafts
+  carry a "Draft" tag, a "To add" banner and `noindex`, and drop out with
+  `NEXT_PUBLIC_HIDE_PENDING=1`. Patient drafts contain only general,
+  well-established advice; clinician drafts are mostly "To add".
+- Talks vs. events: the clinic photos only prove he was at CUTICON 2024 and
+  the IADVL CME 2023, not that he spoke, so they are listed as
+  "Conferences and CMEs" and Talks stays "To add".
+- Menu treatment items became links (`aria-current` removed: it means
+  "current page" on links). On touch tablets a tap now opens the page
+  instead of the details card.
+
+### Still open
+- Clinic to supply: treatment `details` (14), MBBS college + years,
+  registration, memberships, bio, clinical interests, publications, talks,
+  CV PDF, email for doctors; Dr. Panda to rewrite and approve the 5 articles.
+- The single-file static export still covers the home page only; links to
+  the new pages from it do not work offline.
+- Not committed yet (phase 1 and these phases are both uncommitted on `sa-skincure`).
+
+---
+
+## Session 5 — 26 Nov 2026 · Phase 1 of the redesign: hero slider, buttons, type
+
+**Goal:** first phase of the site plan
+(https://claude.ai/artifact/RmoEdTy4VHKzn2jyPoCz5p): a hero photo slider
+instead of the portrait, calm clinical buttons, new type, a credentials
+strip, a treatments overview and the portrait moved to "Meet Dr. Panda".
+
+### What changed
+- **Hero** (`Hero.tsx`): crossfading slider of the clinic's own photos
+  (consultation, treatment room, reception, IADVL CME) with a still text
+  card: headline "Skin, hair and laser care in Nayapalli, Bhubaneswar",
+  name, qualifications, teaching post, WhatsApp + Call. Phones: photo on
+  top, card below. Slides and headline live in `site.hero`.
+  Behaviour in `src/lib/heroSlider.ts`, shared by `HeroSliderEnhancer` and
+  the static export: 6 s per photo, labelled dots, pause/play, stops on
+  hover/focus/hidden tab, no rotation for reduced motion.
+- **Buttons:** the glossy "lens" pills are gone. `.btn` is now a solid,
+  12 px-corner button with roles `.btn-primary` (logo navy),
+  `.btn-secondary` (navy outline), `.btn-on-dark`, `.btn-peer` (green, for
+  doctor-to-doctor contact later). Role classes are unlayered on purpose so
+  they beat the `btn` utility's transparent border.
+- **Type:** Figtree for everything (headings 650–700). Instrument Serif and
+  Manrope removed. `<em>` in headings is upright logo blue. Section headings
+  reveal with a short blur.
+- **Credentials strip** (`Credentials.tsx`) replaces the scrolling marquee:
+  MD (Skin & VD), Assistant Professor at IMS & SUM, languages, evening hours.
+  This also closes the "marquee pause control" item.
+- **Treatments overview** (`TreatmentsOverview.tsx`): Skin / Hair / Laser &
+  procedures cards listing every treatment, each with an "Ask about …"
+  WhatsApp link. Group intros in `site.treatments[].intro`.
+- **Meet Dr. Panda** (`Doctor.tsx`): portrait moved here from the hero, plus
+  a "Training and posts" timeline from `site.doctor.timeline`.
+- Section order: Hero → Credentials → Concerns → Treatments → Meet Dr. Panda
+  → Visit steps → Clinic photos → Teaching and conferences → FAQ → Visit.
+- Tests: e2e for the slider (one photo at a time, dots, pause, no portrait
+  in the hero) and for reduced motion (no rotation); h1 test reads
+  `site.hero.headline`.
+
+### Decisions and why
+- Hero photos are the clinic's own, not stock: real rooms build more trust,
+  and there is no licence question. A dermatoscope/trichoscopy shoot would
+  still improve slides 1 and 2.
+- The slider was built in-house rather than taken from 21st.dev or React
+  Bits: none of those had the pause control, focus/hover stop and
+  reduced-motion handling the WAI carousel guidance needs.
+- MD institution in the timeline comes from his public Secondmedic profile;
+  the MBBS row stays hidden until the college is confirmed.
+- This work stays on `sa-skincure` only. The shared pieces (buttons, type,
+  slider, credentials, menu) are not on `main` yet.
+
+### Still open
+- Port the shared components to `main` (generic content there).
+- Clinic to confirm: MBBS college and years, the MD detail, treatment list.
+- Phase 2 (treatment pages), Phase 3 (Journal), Phase 4 (For doctors).
+- Dev tip: after switching branches, delete both `.next/cache/images` and
+  `.next/dev/cache/images`; the browser pane may also keep stale images.
+
+---
+
+## Session 4 — 26 Nov 2026 · Treatments menu and logo colours
+
+**Goal:** add a Treatments menu to the header that lists what the clinic
+treats and describes each one, and match the site colours to the logo.
+Work is on `sa-skincure` only (moved to a Windows machine this session).
+
+### What changed
+- **Treatments menu (desktop/tablet).** "Treatments" in the header opens a
+  panel with 14 treatments in three groups, following the signboard's
+  "Skin | Hair | Laser": Skin, Hair, Laser & procedures. Hovering or focusing
+  a treatment shows a details card (what it is, "Helps with", and an "Ask
+  about this" WhatsApp button pre-filled with the treatment's name). A strip
+  at the bottom links "not sure what you need" visitors to WhatsApp.
+  Keyboard: Enter/ArrowDown opens, arrows move, Escape closes and returns focus.
+- **Phone menu.** New menu button in the header opens a full-screen sheet:
+  treatments as an accordion with the same descriptions and WhatsApp links,
+  then Concerns / The doctor / Visit and a "Book on WhatsApp" button. This
+  closes the "phone nav menu" item from session 3.
+- Content lives in `site.treatments` (`src/content/site.ts`), with
+  `treatmentsConfirmed = false`; the dev console lists it until confirmed.
+  New `messages.treatment()` in `src/lib/whatsapp.ts`.
+- Menu behaviour is plain DOM code in `src/lib/treatmentsMenu.ts`, used by
+  both the React site (`TreatmentsMenuEnhancer`) and the static export
+  (`enhance.ts`). Without JS the panel opens on hover/focus (CSS) and the
+  phone menu is a native `<details>`.
+- **Colours from the logo.** brand = logo navy `#26448F`, accent = logo sky
+  `#12A6EC`, new `leaf` `#1FA866` (logo green, non-text) and `leaf-ink`
+  `#12784A` (green text). Ink, muted and tints were re-derived around them;
+  tint `lilac` became `mint`. Hero blobs now use sky + mint. OG image and
+  theme colour updated. New contrast pairs added to `contrast.test.ts`.
+- Tests: two new e2e tests (desktop menu, phone menu) and a no-JS hover
+  test. The no-JS test now checks the header "Book a visit" link instead of
+  "the first wa.me link" (that is now inside the closed menu panel).
+
+### Decisions and why
+- The clinic has no public treatment list. The 14 items are drafted from the
+  signboard and directory listings (Justdial: laser hair removal; Lybrate:
+  trichology, cosmetology; Secondmedic: clinical, surgical and aesthetic
+  dermatology) plus the six concerns already on the page. Descriptions are
+  factual, with no promised results, "permanent", prices or offers (NMC).
+- Treatments are buttons, not links: there are no treatment pages yet. The
+  details card carries the action (WhatsApp). Slugs are ready for
+  `/treatments/[slug]` pages later.
+- Header on phones (< 640px) is now logo + menu button; "Book a visit" moved
+  into the menu sheet, because logo + book + menu do not fit at 375px. The
+  bottom booking bar still covers booking. Concerns and Visit links show in
+  the header from 1024px; between 720 and 1024px it shows Treatments and
+  The doctor only.
+- The sheet is sized with `100dvh`, not `bottom: 0`: the header's backdrop
+  blur makes it the containing block for `position: fixed`.
+
+### Still open
+- **Clinic must confirm the treatment list** (remove what Dr. Panda does not
+  do, e.g. PRP or acne-scar procedures), then set `treatmentsConfirmed`.
+- Everything from session 3 except the phone menu.
+- The static export was rebuilt but its menu was not clicked through in a
+  browser this session.
+- Running `next dev` after switching from `main` can serve `main`'s
+  placeholder photos from `.next/cache/images`; delete that folder.
+
+---
+
 ## Session 3 — 20 Nov 2026 · Design critique and fixes
 
 **Goal:** review the UI and flow on desktop and phone, then fix what does not

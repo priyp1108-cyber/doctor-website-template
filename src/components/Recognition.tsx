@@ -13,7 +13,7 @@ export function Recognition() {
   return (
     <section className="section-y pt-0" aria-labelledby="recognition-title">
       <div className="wrap">
-        <Reveal as="p" className="eyebrow text-brand">Recognition</Reveal>
+        <Reveal as="p" className="eyebrow text-brand">Teaching and conferences</Reveal>
         <Reveal as="h2" index={1} id="recognition-title" className="text-h2 mt-4 max-w-[18ch] text-ink">
           Part of Odisha&rsquo;s <em>dermatology</em> community
         </Reveal>

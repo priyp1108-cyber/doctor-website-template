@@ -17,7 +17,8 @@
     "images:placeholders": "node scripts/make-placeholders.mjs",
     "logo": "node scripts/make-logo.mjs",
     "export:static": "node scripts/export-static.mjs",
-    "images:import": "node scripts/import-photos.mjs"
+    "images:import": "node scripts/import-photos.mjs",
+    "map": "node scripts/make-map.mjs"
   },
   "dependencies": {
     "lenis": "1.3.27",
