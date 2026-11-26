@@ -216,50 +216,6 @@
   border-color: var(--color-leaf-ink);
 }
 
-/* Emphasis inside headings: logo blue, upright (no italic display face). */
-:is(.text-h1, .text-h2) em {
-  font-style: normal;
-  color: var(--color-brand);
-}
-.on-dark :is(.text-h1, .text-h2) em {
-  color: var(--color-accent);
-}
-
-/* ───────────────────────── Scroll reveal ─────────────────────────
-   Hidden states only apply once <html> has the `js` class (set by an inline
-   script before paint), so content is readable with JS off. */
-.js [data-reveal] {
-  opacity: 0;
-  transform: translateY(34px);
-  transition:
-    opacity 0.9s var(--ease-soft),
-    transform 0.9s var(--ease-soft);
-  transition-delay: calc(var(--i, 0) * 80ms);
-}
-.js [data-reveal="line"] {
-  opacity: 1;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 1.8s var(--ease-soft);
-}
-.js h2[data-reveal] {
-  filter: blur(6px);
-  transition:
-    opacity 0.9s var(--ease-soft),
-    transform 0.9s var(--ease-soft),
-    filter 0.9s var(--ease-soft);
-  transition-delay: calc(var(--i, 0) * 80ms);
-}
-.js h2[data-reveal].is-in,
-.reveal-fallback h2[data-reveal] {
-  filter: none;
-}
-.js [data-reveal].is-in,
-.reveal-fallback [data-reveal] {
-  opacity: 1;
-  transform: none;
-}
-
 /* ───────────────────────── Hero entrance ───────────────────────── */
 .js .hero-fade {
   animation: fade-up 0.9s var(--ease-soft) both;
@@ -463,10 +419,6 @@ details[open] > summary .faq-icon {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
-  }
-  .js [data-reveal] {
-    opacity: 1 !important;
-    transform: none !important;
   }
   .pulse-dot::after {
     display: none;

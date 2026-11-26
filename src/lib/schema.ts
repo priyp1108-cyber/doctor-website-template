@@ -1,6 +1,6 @@
 import { site } from "@/content/site";
 import { openingHoursSpecification } from "./hours";
-import { answeredFaqs, filled } from "./placeholder";
+import { shownFaqs, filled } from "./placeholder";
 import { mapsLink, siteUrl } from "./links";
 
 /** JSON-LD for the page. Deliberately no aggregateRating / review (NMC rules). */
@@ -66,7 +66,7 @@ export function buildJsonLd() {
         image: `${url}${clinic.photos.reception}`,
         hasMap: mapsLink(),
       },
-      ...(answeredFaqs(site.faqs).length ? [buildFaqJsonLd()] : []),
+      ...(shownFaqs(site.faqs).length ? [buildFaqJsonLd()] : []),
     ],
   };
 }
@@ -75,7 +75,7 @@ export function buildFaqJsonLd() {
   return {
     "@type": "FAQPage",
     "@id": `${siteUrl()}/#faq`,
-    mainEntity: answeredFaqs(site.faqs).map((f) => ({
+    mainEntity: shownFaqs(site.faqs).map((f) => ({
       "@type": "Question",
       name: f.question,
       acceptedAnswer: { "@type": "Answer", text: f.answer },

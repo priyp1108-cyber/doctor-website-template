@@ -1,7 +1,7 @@
 /**
  * Plain-JS behaviour for the single-file static export (scripts/export-static.mjs).
  * It stands in for the React client components, which the export strips out:
- * reveals and loops, the open-now pill, the concern switcher, the booking bar,
+ * decorative loops, the open-now pill, the booking bar,
  * the tap-to-load map, the request form, the header menus and the hero slider. It reuses the same content and
  * helpers as the real site so the two never drift apart.
  */
@@ -15,31 +15,13 @@ import { initHeroSlider } from "@/lib/heroSlider";
 
 declare global {
   interface Window {
-    __revealReady?: boolean;
     __STATIC_IMAGES?: Record<string, string>;
   }
 }
 
-const images = window.__STATIC_IMAGES ?? {};
-const img = (path: string) => images[path] ?? path;
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/* Reveals + decorative loops (mirrors RevealObserver). */
-function reveals() {
-  window.__revealReady = true;
+/* Decorative loops (mirrors RevealObserver). */
+function loops() {
   const root = document.documentElement;
-  root.classList.remove("reveal-fallback");
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        e.target.classList.add("is-in");
-        io.unobserve(e.target);
-      }
-    },
-    { threshold: 0.12 },
-  );
-  document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
   const start = () => {
     const ric = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1200));
     ric(() => root.classList.add("loops"), { timeout: 3000 });
@@ -62,70 +44,6 @@ function openStatus() {
   };
   render();
   window.setInterval(render, 60_000);
-}
-
-/* Concern switcher (mirrors Concerns). */
-const ON = ["border-brand", "bg-brand", "text-paper"];
-const OFF = ["border-ink/15", "bg-white", "text-ink", "hover:border-ink/35"];
-
-function concerns() {
-  const group = document.querySelector('[aria-label="Choose a concern"]');
-  const panel = document.querySelector<HTMLElement>("#concern-panel article");
-  if (!group || !panel) return;
-  const buttons = [...group.querySelectorAll<HTMLButtonElement>("button")];
-  const media = panel.firstElementChild as HTMLElement;
-  // The first concern may have no photo, so the <img> is created on demand.
-  let picture = media.querySelector("img");
-  const TWO_COL = "md:grid-cols-[0.95fr_1.05fr]";
-  const title = panel.querySelector("h3")!;
-  const [blurb, approachP] = panel.querySelectorAll("p");
-  const link = panel.querySelector<HTMLAnchorElement>("a")!;
-  panel.style.transition = "opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)";
-
-  let active = 0;
-  buttons.forEach((btn, i) => {
-    btn.addEventListener("click", () => {
-      if (i === active) return;
-      active = i;
-      buttons.forEach((b, j) => {
-        b.setAttribute("aria-pressed", String(j === i));
-        b.classList.remove(...(j === i ? OFF : ON));
-        b.classList.add(...(j === i ? ON : OFF));
-      });
-      const c = site.concerns[i]!;
-      const swap = () => {
-        media.style.backgroundColor = `var(--color-tint-${c.tint})`;
-        media.hidden = !c.image;
-        panel.classList.toggle(TWO_COL, !!c.image);
-        if (c.image) {
-          if (!picture) {
-            picture = document.createElement("img");
-            picture.className = "object-cover";
-            picture.style.cssText = "position:absolute;height:100%;width:100%;inset:0";
-            media.append(picture);
-          }
-          picture.src = img(c.image);
-          picture.alt = c.imageAlt ?? "";
-        }
-        title.textContent = c.title;
-        if (blurb) blurb.textContent = c.blurb;
-        if (approachP) {
-          const label = approachP.querySelector("span");
-          approachP.textContent = c.approach;
-          if (label) approachP.prepend(label);
-        }
-        link.href = buildWaLink(messages.concern(c));
-        link.dataset.source = `concern:${c.slug}`;
-        const icon = link.querySelector("svg");
-        link.textContent = ` ${c.button}`;
-        if (icon) link.prepend(icon);
-        panel.style.opacity = "1";
-      };
-      if (reduceMotion) return swap();
-      panel.style.opacity = "0";
-      window.setTimeout(swap, 200);
-    });
-  });
 }
 
 /* Booking bar hides while the form's own WhatsApp button is on screen. */
@@ -198,9 +116,8 @@ function requestForm() {
   });
 }
 
-reveals();
+loops();
 openStatus();
-concerns();
 bookingBar();
 mapEmbed();
 requestForm();

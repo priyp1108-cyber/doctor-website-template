@@ -9,6 +9,63 @@ entry, and fill it in before ending the session.
 
 ---
 
+## Session 7 — 26 Nov 2026 · UI review; shorter homepage, plain headings, no scroll animation
+
+**Goal:** pull Om's push (`eca09ef`) into Soumya's local checkout, review the
+UI, and apply the top three fixes from that review.
+
+### What changed
+- **One treatment picker.** The "What's bothering you?" pill switcher
+  (`Concerns.tsx`, `ConcernPanelMotion.tsx`) is gone. `TreatmentsOverview`
+  now carries that heading, keeps the three group cards, and ends with an
+  "Ask the clinic on WhatsApp" line for anything else (it uses the last
+  entry of `site.concerns`). `site.concerns` still feeds the request form.
+- **Credentials strip removed** (`Credentials.tsx`): the hero card and the
+  doctor section already give the same qualifications and post.
+- **Headings are one colour.** No `<em>` accent words in h2s, and the CSS
+  rule that coloured them is deleted. The all-caps labels above the
+  homepage headings are removed. Inner pages keep theirs (group name above
+  a treatment title, `dt` terms).
+- **No scroll animation.** The reveal CSS and the IntersectionObserver are
+  deleted, in the app and in `src/static/enhance.ts`. `Reveal` now only
+  renders its element; `RevealObserver` only starts the pulse-dot loop.
+  The hero entrance is the one load animation.
+- Header: the phone-only "Concerns" link is removed (`#concerns` no longer
+  exists).
+- Homepage is about 6,400px tall at 1440px wide (was about 7,300px).
+
+### Decisions and why
+- Kept the group cards over the pill switcher: every treatment is visible
+  and links to its page without a click.
+- Soumya's earlier uncommitted work (Manrope fonts, the 67-service header
+  menu) clashed with Om's push in all 11 files, so it is in
+  `git stash` ("Soumya local work before Om's eca09ef"), not applied.
+  Om's Sessions 4–6 here are a different line of work from that stash.
+
+### Second pass (same session): the rest of the review
+- **Hero, desktop:** text sits in its own white column on the left, photos
+  on the right (was a card floating over the photo). Phones are unchanged.
+- **FAQ:** the section and its FAQPage schema only appear with three or
+  more answered questions (`shownFaqs` / `MIN_FAQS` in `placeholder.ts`).
+  One is answered today, so "Good to know" is hidden. It returns by itself
+  when two more answers are confirmed in `site.faqs`.
+- **Treatments menu:** panel is 48px taller so the note under the buttons
+  is no longer clipped.
+- **Clinic photos:** the scroll parallax is removed, so the two photos line
+  up. `ParallaxMotion.tsx` and `useIdleModule.ts` are deleted and the
+  `motion` package is removed from `package.json` (nothing else used it).
+- **Footer:** now three columns: clinic details, page links, clinic hours.
+- **Tap targets:** treatment chips and the header logo link are 44px tall.
+
+### Still open
+- Decide whether to bring the stashed Manrope font change in, or drop the stash.
+- Content: treatment pages are mostly "To add" placeholders; all three
+  Journal articles are drafts; two more FAQ answers are needed.
+- Committed and pushed to `sa-skincure`. `static-export/` was not rebuilt.
+- Type check, 71 unit tests and 17 browser tests pass.
+
+---
+
 ## Session 6 — 26 Nov 2026 · Phases 2–4: treatment pages, Journal, For doctors
 
 **Goal:** finish the site plan: 14 treatment pages, the Journal (blog) and

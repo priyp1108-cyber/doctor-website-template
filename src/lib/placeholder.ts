@@ -23,3 +23,11 @@ export function findConfirmValues(obj: unknown, path = ""): string[] {
   }
   return [];
 }
+
+/** A one- or two-question FAQ looks unfinished, so the section and its
+ *  FAQPage schema only appear once this many questions are answered. */
+export const MIN_FAQS = 3;
+export function shownFaqs<T extends { answer: string }>(faqs: readonly T[]): T[] {
+  const answered = answeredFaqs(faqs);
+  return answered.length >= MIN_FAQS ? answered : [];
+}

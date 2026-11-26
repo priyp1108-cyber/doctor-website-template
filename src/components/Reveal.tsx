@@ -12,9 +12,9 @@ type RevealProps = {
 } & Record<string, unknown>;
 
 /**
- * Scroll-reveal wrapper. Renders fully visible on the server; the hidden
- * start state comes from CSS under `.js` (see globals.css), and the
- * RevealObserver (RevealObserver.tsx) adds `is-in` once ~12% of the element is visible.
+ * Layout wrapper kept from the old scroll reveal. Sections no longer animate
+ * in on scroll, so this only renders the element; `data-reveal` and `--i`
+ * stay as hooks in case a single entrance is wanted again.
  */
 export function Reveal({ as: Tag = "div", index = 0, variant = "fade", className, style, children, ...rest }: RevealProps) {
   return (

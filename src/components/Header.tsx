@@ -4,11 +4,9 @@ import { treatmentHref } from "@/lib/pages";
 import { TreatmentsMenuEnhancer } from "./TreatmentsMenuEnhancer";
 import { ArrowIcon, ChatIcon, ChevronDownIcon, CloseIcon, MenuIcon, PlusIcon } from "./icons";
 
-/** Header links. `wide` links only fit in the header from the lg breakpoint;
- *  `phoneOnly` ones show in the phone menu only. Home-page sections use "/#id"
- *  so they work from every page. */
+/** Header links. `wide` links only fit in the header from the lg breakpoint.
+ *  Home-page sections use "/#id" so they work from every page. */
 const links = [
-  { href: "/#concerns", label: "Concerns", wide: true, phoneOnly: true },
   { href: "/#doctor", label: "The doctor", wide: false },
   { href: "/journal", label: "Journal", wide: false },
   { href: "/for-doctors", label: "For doctors", wide: true },
@@ -21,7 +19,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/85 backdrop-blur-[14px]">
       <div className="wrap flex h-[72px] items-center justify-between gap-4">
         {/* Logo + doctor's name; the alt text carries the full site name. */}
-        <a href="/" className="flex min-w-0 items-center gap-4 text-ink">
+        <a href="/" className="flex min-h-[44px] min-w-0 items-center gap-4 text-ink">
           <img
             src={site.clinic.logo.src}
             width={site.clinic.logo.width}
@@ -39,7 +37,7 @@ export function Header() {
         <nav aria-label="Main" className="flex items-center gap-3 md:gap-6 lg:gap-7">
           <ul className="hidden items-center gap-6 md:flex lg:gap-7">
             <TreatmentsMenu />
-            {links.filter((l) => !l.phoneOnly).map((l) => (
+            {links.map((l) => (
               <li key={l.href} className={l.wide ? "hidden lg:block" : undefined}>
                 <a href={l.href} className="text-[16px] font-medium text-ink-soft transition-colors hover:text-ink">
                   {l.label}
@@ -83,7 +81,7 @@ function TreatmentsMenu() {
 
       <div id="tm-panel" data-tm-panel className="tm-panel absolute inset-x-0 top-full border-b border-ink/10 bg-paper shadow-soft">
         <div className="wrap py-8">
-          <div className="relative pb-[268px] lg:min-h-[392px] lg:pr-[392px] lg:pb-0">
+          <div className="relative pb-[268px] lg:min-h-[440px] lg:pr-[392px] lg:pb-0">
             <div className="tm-list grid grid-cols-3 gap-6 lg:gap-8">
               {site.treatments.map((group) => (
                 <div key={group.id}>

@@ -19,7 +19,7 @@ export function VisitPanel() {
           <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
             <div>
               <h2 id="visit-title" className="text-h2 text-paper">
-                Come and <em>see us.</em>
+                Come and see us.
               </h2>
               <address className="mt-8 flex gap-3 text-[17px] text-on-dark not-italic">
                 <PinIcon className="mt-1 shrink-0 text-accent" />

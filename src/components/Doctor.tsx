@@ -31,8 +31,7 @@ export function Doctor() {
         </div>
 
         <div className="md:py-4">
-          <Reveal as="p" className="eyebrow text-accent">Meet {d.shortName}</Reveal>
-          <Reveal as="h2" index={1} id="doctor-title" className="text-h2 mt-5 text-paper">
+          <Reveal as="h2" id="doctor-title" className="text-h2 text-paper">
             {quote ? <>&ldquo;{quote}&rdquo;</> : <>{d.name}</>}
           </Reveal>
           <Reveal as="p" index={2} className="mt-4 text-[17px] font-semibold text-on-dark">

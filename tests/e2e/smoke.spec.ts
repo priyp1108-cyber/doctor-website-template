@@ -8,29 +8,19 @@ test("page loads with one H1 and every section", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toHaveCount(1);
   await expect(page.locator("h1")).toHaveText(site.hero.headline);
-  for (const heading of ["What’s bothering you?", "Your visit, in three steps.", "Good to know", "Come and see us."]) {
+  for (const heading of ["What’s bothering you?", "Your visit, in three steps.", "Inside the clinic", "Come and see us."]) {
     await expect(page.getByRole("heading", { level: 2, name: heading })).toBeAttached();
   }
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
 });
 
-test("switching concern changes the panel and its WhatsApp text", async ({ page }) => {
+test("the treatment picker links every treatment and offers a WhatsApp line for anything else", async ({ page }) => {
   await page.goto("/");
-  const panel = page.locator("#concern-panel");
-  await expect(panel.getByRole("heading", { level: 3 })).toHaveText("Acne & acne scars");
+  const picker = page.locator("#treatments");
+  await expect(picker.getByRole("link", { name: "Hair fall & thinning" })).toHaveAttribute("href", "/treatments/hair-fall");
 
-  const pill = page.getByRole("button", { name: "Hair fall", exact: true });
-  await pill.click();
-  await expect(pill).toHaveAttribute("aria-pressed", "true");
-  await expect(panel.getByRole("heading", { level: 3 })).toHaveText("Hair fall & scalp");
-
-  const cta = panel.getByRole("link", { name: /Book for hair fall/ });
-  const href = await cta.getAttribute("href");
-  expect(href).toContain(`https://wa.me/${number}?text=`);
-  expect(textOf(href)).toBe("Hello, I would like to see Dr. Panda about hair fall.");
-
-  await page.getByRole("button", { name: "Something else", exact: true }).click();
-  const other = await panel.getByRole("link", { name: /Ask the clinic/ }).getAttribute("href");
+  const other = await picker.getByRole("link", { name: /Ask the clinic on WhatsApp/ }).getAttribute("href");
+  expect(other).toContain(`https://wa.me/${number}?text=`);
   expect(textOf(other)).toBe("Hello, I would like to see Dr. Panda about a skin concern.");
 });
 
@@ -74,7 +64,7 @@ test.describe("mobile", () => {
     const bar = page.locator("[data-mobile-bar]");
     // Hidden while the hero's own WhatsApp button is on screen; shows once it scrolls away.
     await expect(bar).toHaveCSS("opacity", "0");
-    await page.locator("#concerns").scrollIntoViewIfNeeded();
+    await page.locator("#doctor").scrollIntoViewIfNeeded();
     await expect(bar).toHaveCSS("opacity", "1");
     await expect(bar.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", new RegExp(`wa\\.me/${number}`));
     await expect(bar.getByRole("link", { name: /Call/ })).toHaveAttribute("href", /^tel:/);
@@ -102,7 +92,7 @@ test.describe("without JavaScript", () => {
   test("content is readable and links work", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("h1")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Good to know" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Come and see us." })).toBeVisible();
     const opacity = await page.locator("[data-reveal]").first().evaluate((el) => getComputedStyle(el).opacity);
     expect(opacity).toBe("1");
     await expect(page.getByRole("link", { name: "Book a visit" })).toHaveAttribute("href", new RegExp(`wa\.me/${number}`));

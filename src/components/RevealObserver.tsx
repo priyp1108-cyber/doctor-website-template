@@ -2,26 +2,13 @@
 
 import { useEffect } from "react";
 
-/** Mount once (in the layout). Adds `is-in` when ~12% of an element is visible. */
+/**
+ * Mount once (in the layout). Starts the decorative CSS loops (pulse dot)
+ * once the page has loaded and the main thread is idle. Sections no longer
+ * animate in on scroll; the hero entrance is the only load animation.
+ */
 export function RevealObserver() {
   useEffect(() => {
-    (window as unknown as { __revealReady?: boolean }).__revealReady = true;
-    document.documentElement.classList.remove("reveal-fallback");
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          entry.target.classList.add("is-in");
-          io.unobserve(entry.target); // reveal once
-        }
-      },
-      { threshold: 0.12 },
-    );
-    document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
-    const stop = () => io.disconnect();
-
-    // Start decorative CSS loops (blobs, float, pulse) once the page
-    // has loaded and the main thread is idle.
     const root = document.documentElement;
     let idle = 0;
     const startLoops = () => {
@@ -32,7 +19,6 @@ export function RevealObserver() {
     else window.addEventListener("load", startLoops, { once: true });
 
     return () => {
-      stop();
       window.removeEventListener("load", startLoops);
       window.cancelIdleCallback?.(idle);
     };

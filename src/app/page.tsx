@@ -1,6 +1,4 @@
 import { Hero } from "@/components/Hero";
-import { Credentials } from "@/components/Credentials";
-import { Concerns } from "@/components/Concerns";
 import { TreatmentsOverview } from "@/components/TreatmentsOverview";
 import { Doctor } from "@/components/Doctor";
 import { VisitSteps } from "@/components/VisitSteps";
@@ -17,8 +15,6 @@ export default function Home() {
     <PageShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(buildJsonLd()) }} />
       <Hero />
-      <Credentials />
-      <Concerns />
       <TreatmentsOverview />
       <Doctor />
       <VisitSteps />

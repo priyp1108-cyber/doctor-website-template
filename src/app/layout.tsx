@@ -53,9 +53,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-// Runs before first paint: enables the JS-only hidden start states.
-// If the app never hydrates, a fallback class reveals everything after 4s.
-const jsFlag = `document.documentElement.classList.add('js');setTimeout(function(){if(!window.__revealReady)document.documentElement.classList.add('reveal-fallback')},4000);`;
+// Runs before first paint: enables the JS-only hero entrance.
+const jsFlag = `document.documentElement.classList.add('js');`;
 
 const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 

@@ -21,7 +21,7 @@ export function VisitSteps() {
     <section className="section-y" aria-labelledby="steps-title">
       <div className="wrap grid gap-12 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
         <Reveal as="h2" id="steps-title" className="text-h2 text-ink md:sticky md:top-[120px] md:self-start">
-          Your visit, <em>in three steps.</em>
+          Your visit, in three steps.
         </Reveal>
 
         <ol className="relative">

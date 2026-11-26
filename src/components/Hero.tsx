@@ -8,7 +8,7 @@ import { ChatIcon, PauseIcon, PhoneIcon, PlayIcon } from "./icons";
 
 /**
  * Hero: a crossfading slider of the clinic's own photos with a still text card.
- * Phones: photo on top, card below. Desktop: card floats over the photos.
+ * Phones: photo on top, card below. Desktop: text on the left, photos on the right.
  */
 export function Hero() {
   const { doctor, hero } = site;
@@ -17,14 +17,14 @@ export function Hero() {
   return (
     <section id="top" className="pt-4 pb-6 md:pt-6" aria-labelledby="hero-title">
       <div className="wrap">
-        <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white shadow-card lg:min-h-[620px] lg:bg-ink">
+        <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white shadow-card lg:grid lg:min-h-[560px] lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
           {/* Photos */}
           <div
             data-hero-slider
             role="region"
             aria-roledescription="carousel"
             aria-label={`Photos of ${site.clinic.shortName}`}
-            className="relative aspect-[4/3] sm:aspect-[16/9] lg:absolute lg:inset-0 lg:aspect-auto"
+            className="relative aspect-[4/3] sm:aspect-[16/9] lg:order-2 lg:aspect-auto"
           >
             {slides.map((s, i) => (
               <div
@@ -44,7 +44,7 @@ export function Hero() {
                   fill
                   priority={i === 0}
                   fetchPriority={i === 0 ? "high" : "low"}
-                  sizes="(min-width: 1240px) 1240px, 100vw"
+                  sizes="(min-width: 1240px) 720px, (min-width: 1024px) 58vw, 100vw"
                   className="object-cover"
                   style={{ objectPosition: s.focus ?? "50% 50%" }}
                 />
@@ -90,8 +90,8 @@ export function Hero() {
             )}
           </div>
 
-          {/* Text card: below the photo on phones, over it on desktop. */}
-          <div className="relative z-10 p-6 sm:p-9 lg:absolute lg:top-1/2 lg:left-8 lg:w-[min(540px,48%)] lg:-translate-y-1/2 lg:rounded-[var(--radius-card)] lg:bg-white lg:p-10 lg:shadow-soft">
+          {/* Text: below the photo on phones, beside it on desktop. */}
+          <div className="relative z-10 p-6 sm:p-9 lg:order-1 lg:self-center lg:p-12">
             <OpenStatus />
             <h1 id="hero-title" className="text-hero hero-fade mt-5 text-ink">
               {hero.headline}

@@ -4,15 +4,19 @@ import { treatmentHref } from "@/lib/pages";
 import { Reveal } from "./Reveal";
 import { ArrowIcon } from "./icons";
 
-/** The three treatment groups from the signboard: Skin · Hair · Laser. */
+/**
+ * The one treatment picker on the homepage: the three groups from the
+ * signboard (Skin · Hair · Laser), each treatment linking to its page, and a
+ * WhatsApp line for anyone unsure where their problem fits.
+ */
 export function TreatmentsOverview() {
+  const other = site.concerns[site.concerns.length - 1]!;
   return (
-    <section id="treatments" className="section-y pt-0" aria-labelledby="treatments-title">
+    <section id="treatments" className="section-y" aria-labelledby="treatments-title">
       <div className="wrap">
-        <Reveal as="p" className="eyebrow text-leaf-ink">Treatments</Reveal>
-        <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-          <Reveal as="h2" index={1} id="treatments-title" className="text-h2 max-w-[20ch] text-ink">
-            Skin, hair and <em>laser</em> care under one roof
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <Reveal as="h2" id="treatments-title" className="text-h2 max-w-[20ch] text-ink">
+            What&rsquo;s bothering you?
           </Reveal>
           <a href="/treatments" className="inline-flex min-h-[44px] items-center gap-2 font-semibold text-brand underline decoration-1 underline-offset-[5px] hover:decoration-2">
             All treatments <ArrowIcon size={18} />
@@ -32,7 +36,7 @@ export function TreatmentsOverview() {
                   <li key={t.slug}>
                     <a
                       href={treatmentHref(t.slug)}
-                      className="inline-flex min-h-[36px] items-center rounded-full bg-tint-mist px-3.5 py-1.5 text-[14.5px] font-medium text-ink transition-colors hover:bg-tint-sky"
+                      className="inline-flex min-h-[44px] items-center rounded-full bg-tint-mist px-4 py-1.5 text-[14.5px] font-medium text-ink transition-colors hover:bg-tint-sky"
                     >
                       {t.name}
                     </a>
@@ -52,6 +56,20 @@ export function TreatmentsOverview() {
             </Reveal>
           ))}
         </ul>
+
+        <p className="mt-8 text-[16px] leading-relaxed text-ink-soft">
+          {other.blurb}{" "}
+          <a
+            href={buildWaLink(messages.concern(other))}
+            target="_blank"
+            rel="noopener"
+            data-track="whatsapp_click"
+            data-source="treatments-overview:other"
+            className="font-semibold text-brand underline decoration-1 underline-offset-[5px] hover:decoration-2"
+          >
+            {other.button} on WhatsApp
+          </a>
+        </p>
       </div>
     </section>
   );

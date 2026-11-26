@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { site } from "@/content/site";
-import { findConfirmValues } from "@/lib/placeholder";
+import { findConfirmValues, shownFaqs } from "@/lib/placeholder";
 import { buildJsonLd } from "@/lib/schema";
 import { articles, audiences } from "@/content/journal";
 import { allTreatments } from "@/lib/pages";
@@ -24,11 +24,12 @@ describe("content & compliance", () => {
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
-  it("JSON-LD has Physician, MedicalClinic and FAQPage, without ratings or reviews", () => {
+  it("JSON-LD has Physician and MedicalClinic, FAQPage only when the FAQ is shown, and no ratings or reviews", () => {
     const json = JSON.stringify(buildJsonLd());
     expect(json).toContain('"Physician"');
     expect(json).toContain('"MedicalClinic"');
-    expect(json).toContain('"FAQPage"');
+    // The FAQ section and its schema appear together (three or more answers).
+    expect(json.includes('"FAQPage"')).toBe(shownFaqs(site.faqs).length > 0);
     expect(json).not.toMatch(/aggregateRating|"review"/i);
   });
 

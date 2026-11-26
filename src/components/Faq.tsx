@@ -1,11 +1,11 @@
 import { site } from "@/content/site";
-import { answeredFaqs } from "@/lib/placeholder";
+import { shownFaqs } from "@/lib/placeholder";
 import { FaqEnhancer } from "./FaqEnhancer";
 import { Reveal } from "./Reveal";
 import { PlusIcon } from "./icons";
 
 export function Faq() {
-  const faqs = answeredFaqs(site.faqs);
+  const faqs = shownFaqs(site.faqs);
   if (faqs.length === 0) return null;
   return (
     <section className="section-y pt-0" aria-labelledby="faq-title">
