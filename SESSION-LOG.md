@@ -9,6 +9,84 @@ entry, and fill it in before ending the session.
 
 ---
 
+## Session 8 — 27 Nov 2026 · Website editor (Keystatic): Journal + treatments, with a review step
+
+**Goal:** let Dr. Panda write and update Journal articles and the
+treatments himself, with a review before anything goes live. First pulled Session 7 (5899367) from
+`origin/sa-skincure`.
+
+### What changed
+- **Articles are files:** the 5 drafts moved from `src/content/journal.ts`
+  into `src/content/articles/<slug>.mdoc` (YAML front matter + Markdoc body;
+  `{% pending %}…{% /pending %}` = "To add" box). `journal.ts` now reads them
+  synchronously (`allArticles()`, `parseArticle`, js-yaml JSON schema so
+  dates stay strings): cached in builds, re-read on every call in dev so
+  editor saves show without a restart. It is server-only now, so
+  `ConfirmWarning` gets the draft count as a prop from the layout.
+- **Rendering:** `src/components/ArticleBody.tsx` + `src/lib/markdoc.ts`
+  (document node rendered as a fragment, so there's one `<article>`); body
+  styles are `.article-body` rules in `globals.css`.
+- **Editor:** `keystatic.config.ts` (collection `articles`, fields title/web
+  address, summary, written for, date, draft, related treatments, article).
+  UI at `src/pages/keystatic/[[...params]].tsx` (Pages Router, so the site's
+  root layout, smooth scroll and CSS don't wrap it), API at
+  `src/app/api/keystatic/[...params]/route.ts`. Local mode in dev; Keystatic
+  Cloud with `branchPrefix: "updates/"` when
+  `NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT` is set; 404 in production without it.
+  `robots.txt` disallows `/keystatic` and `/api/`.
+- **Treatments in the editor:** the 14 treatments moved from `site.ts` into
+  `src/content/treatments.json` (Keystatic singleton "Treatments": a
+  drag-to-reorder list; each has name, web address, menu group, what it is,
+  who it helps, and page details: steps, sessions, aftercare, questions).
+  Menu groups stay in `site.ts` (`treatmentGroupInfo`);
+  `buildTreatmentGroups()` turns the flat list into groups and treats blank
+  editor fields as missing, so "To add" boxes still show. Static JSON import
+  (`with { type: "json" }`, which Playwright's Node needs) so client
+  components and the static export keep working. Tested in the editor: an
+  edit saved to the JSON and showed on /treatments/acne; Keystatic omits
+  blank text fields, so the file is stored in that shape.
+- **Review step:** `.github/workflows/website-review.yml`: on push to
+  `updates/**` it runs typecheck + unit tests and opens a PR into
+  `sa-skincure` with a review checklist; it also runs the tests on PRs into
+  `sa-skincure`. README "Website editor" has the one-time setup.
+- **Tests:** NMC wording check is now per article and per treatment and
+  names the word and where it is; Markdoc validity per article; treatment
+  web addresses and groups; parser and `buildTreatmentGroups` tests.
+  100 unit, 17 e2e pass; static export still builds.
+- **Packages** (each release at least two weeks old): `@keystatic/core` 0.6.9,
+  `@keystatic/next` 5.0.5, `@keystar/ui` 0.10.0, `react-aria` 3.50.0,
+  `react-stately` 3.48.0 (the peer pins Keystatic needs), `@markdoc/markdoc`
+  0.4.0 (same line as Keystatic), `js-yaml` 4.1.0.
+
+### Decisions and why
+- Keystatic Cloud over GitHub mode: editors log in without a GitHub account.
+  Free for up to 3 users per team.
+- Enforcing review: branch protection on the live branch is what stops direct
+  saves. Keystatic then asks for a new branch. Its own "Create pull request"
+  button targets the repo default (`main`), so the workflow opens the PR with
+  the right base instead. The tests run on the push because PRs opened with
+  GITHUB_TOKEN don't trigger other workflows.
+- Dr. Panda's link is `/keystatic/branch/sa-skincure`, because the repo
+  default branch is the generic `main`.
+
+### Still open
+- One-time setup not done: Keystatic Cloud project + invite, Vercel env var,
+  branch protection on `sa-skincure` and `main`, Actions PR permission (README
+  "Website editor"). The full Cloud → branch → PR flow is untested until then.
+- Local editor tested end to end (fresh dev server): created an article
+  (file written as expected; shown on its page, in the Journal list and on
+  the related treatment page) and edited an existing one (only the changed
+  field differs; headings, lists and `{% pending %}` round-trip byte-exact;
+  long summaries are saved as folded YAML, which the parser reads). Test
+  changes removed. Toolbar formatting (headings, bullets) works but is
+  fiddly to drive from automation; worth a quick manual try.
+- Adding `src/pages/` needs a full dev-server restart. Touching
+  `next.config.ts` instead left the server in a reload loop.
+- The single-file static export still covers the home page only.
+- Not committed.
+
+---
+
 ## Session 7 — 26 Nov 2026 · UI review; shorter homepage, plain headings, no scroll animation
 
 **Goal:** pull Om's push (`eca09ef`) into Soumya's local checkout, review the

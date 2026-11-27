@@ -5,6 +5,7 @@ import { PageShell } from "@/components/PageShell";
 import { PageIntro } from "@/components/PageIntro";
 import { BookPanel } from "@/components/BookPanel";
 import { Pending } from "@/components/Pending";
+import { ArticleBody } from "@/components/ArticleBody";
 import { ArticleCard, AudienceTag, DraftTag } from "@/components/Journal";
 import { ArrowIcon } from "@/components/icons";
 import { pageMetadata } from "@/lib/meta";
@@ -80,34 +81,7 @@ export default async function ArticlePage({ params }: Props) {
               This is a draft outline. Dr. Panda to review, rewrite in his own words and approve before it is published.
             </Pending>
           )}
-          <div className="space-y-5">
-            {a.body.map((b, i) => {
-              switch (b.type) {
-                case "h2":
-                  return (
-                    <h2 key={i} className="text-h3 pt-4 text-ink">
-                      {b.text}
-                    </h2>
-                  );
-                case "ul":
-                  return (
-                    <ul key={i} className="text-body list-disc space-y-2 pl-6 text-ink-soft marker:text-leaf">
-                      {b.items.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  );
-                case "pending":
-                  return <Pending key={i}>{b.text}</Pending>;
-                default:
-                  return (
-                    <p key={i} className="text-body text-ink-soft">
-                      {b.text}
-                    </p>
-                  );
-              }
-            })}
-          </div>
+          <ArticleBody source={a.body} />
 
           {related.length > 0 && (
             <nav aria-labelledby="related-title" className="mt-12 rounded-[20px] bg-tint-sky p-6">

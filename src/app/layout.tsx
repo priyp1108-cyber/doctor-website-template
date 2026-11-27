@@ -8,6 +8,7 @@ import { RevealObserver } from "@/components/RevealObserver";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { TrackClicks } from "@/components/TrackClicks";
 import { ConfirmWarning } from "@/components/ConfirmWarning";
+import { allArticles } from "@/content/journal";
 import "./globals.css";
 
 const figtree = Figtree({
@@ -69,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RevealObserver />
         <SmoothScroll />
         <TrackClicks />
-        <ConfirmWarning />
+        <ConfirmWarning journalDrafts={allArticles().filter((a) => a.draft).length} />
         {plausibleDomain && (
           <Script defer data-domain={plausibleDomain} src="https://plausible.io/js/script.js" strategy="afterInteractive" />
         )}

@@ -1,5 +1,5 @@
 import { site, type Treatment, type TreatmentGroup } from "@/content/site";
-import { articles, visibleArticles, type Article, type Audience } from "@/content/journal";
+import { visibleArticles, type Article, type Audience } from "@/content/journal";
 import { showPending } from "./pending";
 
 /** Every treatment with its group, in menu order. */
@@ -23,9 +23,6 @@ export function journalArticles(audience?: Audience): Article[] {
 export function findArticle(slug: string): Article | undefined {
   return journalArticles().find((a) => a.slug === slug);
 }
-
-/** Every article regardless of status, for tests. */
-export { articles };
 
 /** "2026-11-20" → "20 November 2026". */
 export function formatDate(iso: string): string {

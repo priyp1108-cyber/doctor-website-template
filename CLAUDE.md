@@ -6,6 +6,10 @@ entry at the top using the template at the bottom of that file.
 
 ## Ground rules
 - All clinic facts live in `src/content/site.ts`. Components never hard-code them.
+- Exceptions, edited by Dr. Panda in Keystatic (`/keystatic`,
+  `keystatic.config.ts`): Journal articles in `src/content/articles/*.mdoc`
+  and the treatments in `src/content/treatments.json`. His saves reach the
+  live branch only through a reviewed PR (README "Website editor").
 - NMC advertising rules: no testimonials, ratings, superlatives ("best",
   "top", "leading"), guarantees, offers, or before/after photos. A unit test
   checks the wording in `site.ts`.

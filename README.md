@@ -113,6 +113,68 @@ in Vercel's environment variables. The page then sends `whatsapp_click` (with
 its source), `call_click`, `map_click` and `concern_select`. It never sends
 names or phone numbers.
 
+## Website editor (Keystatic)
+
+Dr. Panda edits two parts of the site himself at `/keystatic`:
+
+- **Journal articles**: one Markdoc file each in `src/content/articles/<slug>.mdoc`.
+- **Treatments**: names, menu group, "What it is" and "Who it helps" texts, and
+  the treatment-page details (visit steps, sessions, aftercare, questions).
+  All 14 are in `src/content/treatments.json`; list order is menu order. The
+  menu groups themselves (Skin / Hair / Laser & procedures) stay in `site.ts`.
+
+The editor saves its changes to those files in Git. Nothing he saves goes live
+until someone reviews and merges it.
+
+**On your machine:** run `npx pnpm@9 dev` and open
+http://localhost:3000/keystatic. This is local mode: saves write straight to
+the files, so use it for testing, or to edit content yourself.
+
+**On the live site (one-time setup, done by the repo owner):**
+
+1. On https://keystatic.cloud, create a team and a project, and connect the
+   project to this GitHub repo. The free plan covers up to 3 users per team.
+   Invite Dr. Panda to the team. He doesn't need a GitHub account.
+2. In Vercel → Settings → Environment Variables, set
+   `NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT` to the project's `team/project` name
+   (shown in its settings), then redeploy. Without this variable, `/keystatic`
+   returns 404 in production.
+3. In GitHub → Settings → Branches (or Rules → Rulesets), protect the live
+   branch (`sa-skincure`) and `main`: require a pull request with 1 approval,
+   and require the **Tests and NMC wording check** status check.
+4. In GitHub → Settings → Actions → General → Workflow permissions, tick
+   **Allow GitHub Actions to create and approve pull requests**.
+5. Send Dr. Panda this link: `https://<domain>/keystatic/branch/sa-skincure`.
+   Always use this link. A plain `/keystatic` opens `main`, the generic
+   template branch.
+
+**How a change goes live:**
+
+1. Dr. Panda edits an article or a treatment and clicks **Save**. The live
+   branch is protected, so the editor asks him to create a branch. He names
+   it, for example `sunscreen update`, and the editor saves it as
+   `updates/sunscreen-update`.
+2. `.github/workflows/website-review.yml` runs the tests (including the NMC
+   wording check, which names any banned word and the article or treatment
+   it is in). It also opens a pull request into `sa-skincure`. Vercel posts a
+   preview link on the pull request.
+3. The reviewer (you or Priya) reads the preview, works through the checklist
+   in the pull request, then approves and merges.
+4. Vercel deploys the live site in about two minutes.
+
+If the check fails, ask Dr. Panda to fix the wording on the same branch in the
+editor. The pull request updates itself.
+
+Inside the editor: **Draft** stays ticked until an article is ready to go
+live. **To add (note)** inserts a dashed reminder box, which is hidden on the
+launch build (`NEXT_PUBLIC_HIDE_PENDING=1`). Photos are saved to
+`public/images/journal/` and must be the clinic's own (see `CLAUDE.md`).
+
+Treatments: leave a page detail empty and the treatment page shows a "To add"
+box for it in previews. Changing a treatment's **Web address** changes its
+page link and breaks Journal articles that link to it (the tests catch this),
+so don't change it once the page is live.
+
 ## How it's built
 
 ```

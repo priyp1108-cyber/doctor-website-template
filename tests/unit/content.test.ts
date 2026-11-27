@@ -2,11 +2,16 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { site } from "@/content/site";
+import { buildTreatmentGroups, site, treatmentGroupInfo, type TreatmentFileEntry } from "@/content/site";
+import treatmentsFile from "@/content/treatments.json" with { type: "json" };
 import { findConfirmValues, shownFaqs } from "@/lib/placeholder";
 import { buildJsonLd } from "@/lib/schema";
-import { articles, audiences } from "@/content/journal";
+import { allArticles, articlesDir, audiences, parseArticle } from "@/content/journal";
+import { validateBody } from "@/lib/markdoc";
 import { allTreatments } from "@/lib/pages";
+
+const articles = allArticles();
+const banned = /\b(best|no\.\s?1|number one|top|leading|guarantee[d]?|permanent|100\s?%|discount|offer)\b/i;
 
 const srcDir = fileURLToPath(new URL("../../src/", import.meta.url));
 const files = (dir: string): string[] =>
@@ -58,9 +63,59 @@ describe("content & compliance", () => {
   });
 
   it("no banned NMC wording in copy", () => {
-    const copy = JSON.stringify(site) + JSON.stringify(articles);
-    const banned = /\b(best|no\.\s?1|number one|top|leading|guarantee[d]?|permanent|100\s?%|discount|offer)\b/i;
-    expect(copy).not.toMatch(banned);
+    expect(JSON.stringify(site)).not.toMatch(banned);
+  });
+
+  // Articles come from the Journal editor, so each failure names the
+  // article and the word: this message is what the reviewer sees on the PR.
+  it.each(articles.map((a) => [a.slug, a] as const))("no banned NMC wording in article %s", (slug, a) => {
+    const found = JSON.stringify(a).match(banned);
+    expect(found, `"${found?.[0]}" is not allowed under NMC rules (src/content/articles/${slug}.mdoc)`).toBeNull();
+  });
+
+  it.each(articles.map((a) => [a.slug, a] as const))("article %s body is valid Markdoc", (slug, a) => {
+    const errors = validateBody(a.body).map((e) => `line ${e.lines[0] ?? "?"}: ${e.error.message}`);
+    expect(errors, `src/content/articles/${slug}.mdoc`).toEqual([]);
+  });
+
+  // Treatments come from the editor too (treatments.json): name the treatment in failures.
+  it.each(treatmentsFile.treatments.map((t) => [t.name, t] as const))("no banned NMC wording in treatment %s", (name, t) => {
+    const found = JSON.stringify(t).match(banned);
+    expect(found, `"${found?.[0]}" is not allowed under NMC rules (treatment "${name}" in src/content/treatments.json)`).toBeNull();
+  });
+
+  it("treatments.json: valid web addresses, known menu groups, every group used", () => {
+    const groups = new Set<string>(treatmentGroupInfo.map((g) => g.id));
+    for (const t of treatmentsFile.treatments) {
+      expect(t.slug, `web address of "${t.name}"`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+      expect(groups.has(t.group), `menu group of "${t.name}"`).toBe(true);
+    }
+    for (const g of site.treatments) expect(g.treatments.length, `group "${g.label}" has no treatments`).toBeGreaterThan(0);
+  });
+
+  it("buildTreatmentGroups treats blank editor fields as missing and keeps filled ones", () => {
+    const base: TreatmentFileEntry = { name: " N ", slug: "n", group: "skin", description: "D", forWhom: "F" };
+    const blank = buildTreatmentGroups([{ ...base, details: { steps: ["", " "], sessions: "  ", aftercare: "", faqs: [{ question: "", answer: "" }] } }]);
+    expect(blank[0]!.treatments[0]).toEqual({ slug: "n", name: "N", description: "D", forWhom: "F" });
+    const filled = buildTreatmentGroups([{ ...base, details: { steps: ["One"], sessions: "Two", aftercare: "", faqs: [{ question: "Q", answer: "A" }] } }]);
+    expect(filled[0]!.treatments[0]!.details).toEqual({ steps: ["One"], sessions: "Two", faqs: [{ question: "Q", answer: "A" }] });
+    expect(() => buildTreatmentGroups([{ ...base, group: "nails" }])).toThrow(/unknown group "nails"/);
+  });
+
+  it("every file in src/content/articles is an .mdoc article", () => {
+    expect(readdirSync(articlesDir).filter((f) => !f.endsWith(".mdoc"))).toEqual([]);
+  });
+
+  it("parseArticle reads front matter and rejects missing fields", () => {
+    const ok = parseArticle("x", '---\ntitle: "A: b"\nsummary: S\naudience: patients\ndate: 2026-11-20\ndraft: false\nrelated: []\n---\nBody\n');
+    expect(ok).toMatchObject({ slug: "x", title: "A: b", date: "2026-11-20", draft: false, body: "Body", related: undefined });
+    expect(() => parseArticle("y", "---\ntitle: T\naudience: patients\ndate: 2026-11-20\n---\n")).toThrow(/y\.mdoc: "summary" is missing/);
+    expect(() => parseArticle("z", "no front matter")).toThrow(/front matter/);
+  });
+
+  it("the NMC check catches a banned word in an article and names it", () => {
+    const a = parseArticle("t", "---\ntitle: T\nsummary: S\naudience: patients\ndate: 2026-11-20\n---\nThe best results, guaranteed.\n");
+    expect(JSON.stringify(a).match(banned)?.[0]).toBe("best");
   });
 
   it("components use tokens, not hard-coded hex colours", () => {

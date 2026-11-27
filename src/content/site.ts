@@ -7,7 +7,11 @@
  *
  * Compliance reminder (NMC advertising rules): no testimonials, ratings,
  * "best / No. 1 / top / leading", guarantees, discounts or before/after photos.
+ *
+ * Exception: the treatments list is in treatments.json (edited in Keystatic).
  */
+
+import treatmentsFile from "./treatments.json" with { type: "json" };
 
 export type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 /** A session as ["HH:MM", "HH:MM"], 24h, Asia/Kolkata. "24:00" may close a day. */
@@ -55,6 +59,16 @@ export type Treatment = {
 };
 
 export type TreatmentGroup = { id: string; label: string; intro: string; treatments: Treatment[] };
+
+/** One treatment as the Keystatic editor saves it in treatments.json. */
+export type TreatmentFileEntry = {
+  name: string;
+  slug: string;
+  group: string;
+  description: string;
+  forWhom: string;
+  details?: { steps?: string[]; sessions?: string; aftercare?: string; faqs?: Faq[] };
+};
 
 export type HeroSlide = {
   /** Short label shown on the photo ("Consultation"). */
@@ -249,116 +263,55 @@ const concerns: Concern[] = [
  */
 const treatmentsConfirmed = false;
 
-const treatments: TreatmentGroup[] = [
-  {
-    id: "skin",
-    label: "Skin",
-    intro: "Medical care for acne, pigmentation, rashes, infections and allergies.",
-    treatments: [
-      {
-        slug: "acne",
-        name: "Acne & acne scars",
-        description:
-          "Medicines, skin-care advice and in-clinic procedures to bring breakouts under control and soften the marks they leave.",
-        forWhom: "Pimples, blackheads, painful cysts, dark or pitted marks.",
-      },
-      {
-        slug: "pigmentation",
-        name: "Pigmentation & melasma",
-        description:
-          "Finding the cause of the dark patches first, then creams, sun-protection advice and peels where they suit your skin.",
-        forWhom: "Melasma, tanning, dark circles, uneven skin tone.",
-      },
-      {
-        slug: "eczema-psoriasis",
-        name: "Eczema & psoriasis",
-        description: "Long-term care to calm flare-ups, ease the itch and keep skin comfortable between visits.",
-        forWhom: "Dry, scaly, itchy or inflamed patches that keep returning.",
-      },
-      {
-        slug: "fungal",
-        name: "Fungal infections",
-        description: "A clear diagnosis and a full course of treatment, so the infection clears instead of returning after creams.",
-        forWhom: "Ringworm, jock itch, nail fungus, recurring itchy rashes.",
-      },
-      {
-        slug: "vitiligo",
-        name: "Vitiligo & white patches",
-        description: "Examination of the white patches and a treatment plan to slow their spread and help colour return.",
-        forWhom: "White or light patches on the skin or lips.",
-      },
-      {
-        slug: "allergies",
-        name: "Skin allergies & hives",
-        description: "Working out what sets off the reaction, then treating the rash, swelling and itch.",
-        forWhom: "Hives (urticaria), contact allergy, rashes after medicines.",
-      },
-    ],
-  },
-  {
-    id: "hair",
-    label: "Hair",
-    intro: "Finding the reason for hair loss or a scalp problem, then treating that reason.",
-    treatments: [
-      {
-        slug: "hair-fall",
-        name: "Hair fall & thinning",
-        description: "A scalp examination and, where needed, blood tests to find the reason, then treatment matched to it.",
-        forWhom: "Heavy shedding, a widening parting, a receding hairline.",
-      },
-      {
-        slug: "scalp",
-        name: "Dandruff & scalp care",
-        description: "Treatment for flaking, itching and infections of the scalp.",
-        forWhom: "Dandruff, seborrhoeic dermatitis, an itchy or sore scalp.",
-      },
-      {
-        slug: "alopecia-areata",
-        name: "Patchy hair loss",
-        description: "Treatment for alopecia areata, including in-clinic injections into the patches where suitable.",
-        forWhom: "Round bald patches on the scalp or beard.",
-      },
-      {
-        slug: "prp",
-        name: "PRP for hair",
-        description:
-          "Platelet-rich plasma, prepared from a small sample of your own blood, is injected into the scalp to support hair growth. Done as a course of sessions.",
-        forWhom: "Early thinning, as part of a wider hair-fall plan.",
-      },
-    ],
-  },
-  {
-    id: "laser",
-    label: "Laser & procedures",
-    intro: "Laser sessions and minor procedures in the clinic's treatment room.",
-    treatments: [
-      {
-        slug: "laser-hair-reduction",
-        name: "Laser hair reduction",
-        description: "Laser sessions that reduce unwanted hair growth over a course of treatments, spaced a few weeks apart.",
-        forWhom: "Face, underarms, arms and legs; excess hair from hormonal causes.",
-      },
-      {
-        slug: "chemical-peels",
-        name: "Chemical peels",
-        description: "A controlled peel applied in the clinic that clears the outer layer of skin to improve tone and texture.",
-        forWhom: "Acne marks, tanning, dull or uneven skin.",
-      },
-      {
-        slug: "acne-scar-procedures",
-        name: "Acne-scar procedures",
-        description: "Microneedling and similar procedures to smooth depressed scars, done over several sessions.",
-        forWhom: "Pitted, rolling or boxcar acne scars.",
-      },
-      {
-        slug: "skin-surgery",
-        name: "Mole, wart & skin-tag removal",
-        description: "Minor procedures under local anaesthesia, usually finished in a single visit.",
-        forWhom: "Warts, skin tags, moles, corns, milia.",
-      },
-    ],
-  },
-];
+/**
+ * The treatments themselves (name, texts, page details) live in
+ * src/content/treatments.json so Dr. Panda can edit them in Keystatic
+ * (/keystatic → Treatments). Only the menu groups are set here; each
+ * treatment names its group by `id`. Menu order = order in the JSON file.
+ */
+export const treatmentGroupInfo = [
+  { id: "skin", label: "Skin", intro: "Medical care for acne, pigmentation, rashes, infections and allergies." },
+  { id: "hair", label: "Hair", intro: "Finding the reason for hair loss or a scalp problem, then treating that reason." },
+  { id: "laser", label: "Laser & procedures", intro: "Laser sessions and minor procedures in the clinic's treatment room." },
+] as const satisfies readonly Omit<TreatmentGroup, "treatments">[];
+
+const treatments: TreatmentGroup[] = buildTreatmentGroups(treatmentsFile.treatments);
+
+/**
+ * Turns the editor's flat list into menu groups. The editor saves blank
+ * fields as "" and []: those become "missing", so the treatment page shows
+ * its "To add" box for them, as before.
+ */
+export function buildTreatmentGroups(list: readonly TreatmentFileEntry[]): TreatmentGroup[] {
+  const known = new Set<string>(treatmentGroupInfo.map((g) => g.id));
+  for (const t of list) {
+    if (!known.has(t.group)) throw new Error(`treatments.json: "${t.name}" has unknown group "${t.group}"`);
+  }
+  const text = (v: string | undefined) => (v?.trim() ? v.trim() : undefined);
+  return treatmentGroupInfo.map((g) => ({
+    ...g,
+    treatments: list
+      .filter((t) => t.group === g.id)
+      .map((t): Treatment => {
+        const d = t.details;
+        const steps = d?.steps?.map((x) => x.trim()).filter(Boolean) ?? [];
+        const faqs = d?.faqs?.filter((f) => f.question.trim() && f.answer.trim()) ?? [];
+        const details: NonNullable<Treatment["details"]> = {
+          ...(steps.length && { steps }),
+          ...(text(d?.sessions) && { sessions: text(d?.sessions) }),
+          ...(text(d?.aftercare) && { aftercare: text(d?.aftercare) }),
+          ...(faqs.length && { faqs }),
+        };
+        return {
+          slug: t.slug.trim(),
+          name: t.name.trim(),
+          description: t.description.trim(),
+          forWhom: t.forWhom.trim(),
+          ...(Object.keys(details).length && { details }),
+        };
+      }),
+  }));
+}
 
 /**
  * Conference and CME photos (shown near the end of the page). Keep captions

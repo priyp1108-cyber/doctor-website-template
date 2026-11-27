@@ -1,0 +1,158 @@
+{
+  "treatments": [
+    {
+      "name": "Acne & acne scars",
+      "slug": "acne",
+      "group": "skin",
+      "description": "Medicines, skin-care advice and in-clinic procedures to bring breakouts under control and soften the marks they leave.",
+      "forWhom": "Pimples, blackheads, painful cysts, dark or pitted marks.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Pigmentation & melasma",
+      "slug": "pigmentation",
+      "group": "skin",
+      "description": "Finding the cause of the dark patches first, then creams, sun-protection advice and peels where they suit your skin.",
+      "forWhom": "Melasma, tanning, dark circles, uneven skin tone.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Eczema & psoriasis",
+      "slug": "eczema-psoriasis",
+      "group": "skin",
+      "description": "Long-term care to calm flare-ups, ease the itch and keep skin comfortable between visits.",
+      "forWhom": "Dry, scaly, itchy or inflamed patches that keep returning.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Fungal infections",
+      "slug": "fungal",
+      "group": "skin",
+      "description": "A clear diagnosis and a full course of treatment, so the infection clears instead of returning after creams.",
+      "forWhom": "Ringworm, jock itch, nail fungus, recurring itchy rashes.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Vitiligo & white patches",
+      "slug": "vitiligo",
+      "group": "skin",
+      "description": "Examination of the white patches and a treatment plan to slow their spread and help colour return.",
+      "forWhom": "White or light patches on the skin or lips.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Skin allergies & hives",
+      "slug": "allergies",
+      "group": "skin",
+      "description": "Working out what sets off the reaction, then treating the rash, swelling and itch.",
+      "forWhom": "Hives (urticaria), contact allergy, rashes after medicines.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Hair fall & thinning",
+      "slug": "hair-fall",
+      "group": "hair",
+      "description": "A scalp examination and, where needed, blood tests to find the reason, then treatment matched to it.",
+      "forWhom": "Heavy shedding, a widening parting, a receding hairline.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Dandruff & scalp care",
+      "slug": "scalp",
+      "group": "hair",
+      "description": "Treatment for flaking, itching and infections of the scalp.",
+      "forWhom": "Dandruff, seborrhoeic dermatitis, an itchy or sore scalp.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Patchy hair loss",
+      "slug": "alopecia-areata",
+      "group": "hair",
+      "description": "Treatment for alopecia areata, including in-clinic injections into the patches where suitable.",
+      "forWhom": "Round bald patches on the scalp or beard.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "PRP for hair",
+      "slug": "prp",
+      "group": "hair",
+      "description": "Platelet-rich plasma, prepared from a small sample of your own blood, is injected into the scalp to support hair growth. Done as a course of sessions.",
+      "forWhom": "Early thinning, as part of a wider hair-fall plan.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Laser hair reduction",
+      "slug": "laser-hair-reduction",
+      "group": "laser",
+      "description": "Laser sessions that reduce unwanted hair growth over a course of treatments, spaced a few weeks apart.",
+      "forWhom": "Face, underarms, arms and legs; excess hair from hormonal causes.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Chemical peels",
+      "slug": "chemical-peels",
+      "group": "laser",
+      "description": "A controlled peel applied in the clinic that clears the outer layer of skin to improve tone and texture.",
+      "forWhom": "Acne marks, tanning, dull or uneven skin.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Acne-scar procedures",
+      "slug": "acne-scar-procedures",
+      "group": "laser",
+      "description": "Microneedling and similar procedures to smooth depressed scars, done over several sessions.",
+      "forWhom": "Pitted, rolling or boxcar acne scars.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    },
+    {
+      "name": "Mole, wart & skin-tag removal",
+      "slug": "skin-surgery",
+      "group": "laser",
+      "description": "Minor procedures under local anaesthesia, usually finished in a single visit.",
+      "forWhom": "Warts, skin tags, moles, corns, milia.",
+      "details": {
+        "steps": [],
+        "faqs": []
+      }
+    }
+  ]
+}

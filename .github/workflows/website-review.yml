@@ -1,0 +1,83 @@
+# Review step for the website editor (/keystatic): Journal articles and treatments.
+#
+# Keystatic saves Dr. Panda's edits to branches named updates/<something>.
+# The live branch is protected (see README "Journal editor"), so nothing he
+# writes goes live until someone approves and merges the pull request.
+#
+# On every save to an updates/* branch this workflow:
+#   1. runs the unit tests, including the NMC wording check, and
+#   2. opens a pull request into the live branch if there is none yet.
+# It also runs the tests on any other pull request into the live branch.
+#
+# Pull requests opened with GITHUB_TOKEN do not start other workflows, which
+# is why the tests run on the push itself; the result shows on the PR.
+#
+# One-time GitHub setting: Settings → Actions → General → Workflow
+# permissions → tick "Allow GitHub Actions to create and approve pull requests".
+
+name: Website review
+
+on:
+  push:
+    branches: ["updates/**"]
+  pull_request:
+    branches: [sa-skincure]
+
+env:
+  # The branch Vercel deploys as the live site for this clinic.
+  LIVE_BRANCH: sa-skincure
+
+concurrency:
+  group: website-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Tests and NMC wording check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npx --yes pnpm@9 install --frozen-lockfile
+      - run: npx pnpm@9 typecheck
+      - run: npx pnpm@9 test
+
+  open-pr:
+    name: Open review pull request
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Open a pull request into the live branch if none is open
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          existing=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            echo "Pull request #$existing is already open for $BRANCH."
+            exit 0
+          fi
+          gh pr create --repo "$REPO" --base "$LIVE_BRANCH" --head "$BRANCH" \
+            --title "Website update: ${BRANCH#updates/}" \
+            --body "$(cat <<'BODY'
+          Changes saved from the Keystatic editor (Journal articles and/or treatments).
+
+          Before approving:
+          - [ ] Open the Vercel preview link below and read each changed article or treatment page.
+          - [ ] The "Tests and NMC wording check" passed (it names any banned word and where it is).
+          - [ ] Articles meant to go live have **Draft** unticked; no "To add" notes left in them.
+          - [ ] Treatments: no web address (slug) changed on a live page; menu order and groups look right.
+          - [ ] No patient stories, testimonials, promised results, prices or before/after photos.
+          - [ ] Any photos are the clinic's own.
+
+          Approve and merge to publish. Vercel redeploys the live site in about two minutes.
+          BODY
+          )"
